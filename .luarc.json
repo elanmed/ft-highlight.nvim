@@ -13,6 +13,7 @@
     ".luals/addons"
   ],
   "workspace.library": [
+    "$VIMRUNTIME",
     ".luals/addons/busted/library",
     ".luals/addons/luassert/library"
   ]
