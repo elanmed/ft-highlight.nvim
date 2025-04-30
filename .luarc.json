@@ -1,17 +1,19 @@
 {
-  "runtime.version": "LuaJIT",
   "runtime.path": [
-    "lua/?.lua",
-    "lua/?/init.lua"
+    "?.lua"
   ],
+  "workspace.ignoreSubmodules": false,
   "diagnostics.globals": [
     "vim"
   ],
   "diagnostics.disable": [
     "missing-fields"
   ],
-  "workspace.checkThirdParty": false,
+  "workspake.userThirdParty": [
+    ".luals/addons"
+  ],
   "workspace.library": [
-    "$VIMRUNTIME"
+    ".luals/addons/busted/library",
+    ".luals/addons/luassert/library"
   ]
 }

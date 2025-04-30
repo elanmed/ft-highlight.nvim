@@ -1,0 +1,6 @@
+[submodule ".luals/addons/busted"]
+	path = .luals/addons/busted
+	url = https://github.com/LuaCATS/busted
+[submodule ".luals/addons/luassert"]
+	path = .luals/addons/luassert
+	url = https://github.com/LuaCATS/luassert
