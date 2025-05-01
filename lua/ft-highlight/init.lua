@@ -1,4 +1,4 @@
-local FTHighlight = require "lua.ft-highlight.class"
+local FTHighlight = require "ft-highlight.class"
 local ft_highlight = FTHighlight:new()
 
 local M = {}
