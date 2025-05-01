@@ -23,18 +23,6 @@ function FTHighlight:toggle_off()
   self.highlighted_line = nil
 end
 
--- row and col params are expected to be already 0-indexed
---- @param opts { row: number, start_col: number, end_col: number, hl_group: string }
-function FTHighlight:apply_highlight(opts)
-  vim.hl.range(
-    0,
-    self.ns_id,
-    opts.hl_group,
-    { opts.row, opts.start_col, },
-    { opts.row, opts.end_col, }
-  )
-end
-
 --- @param str string
 function FTHighlight:get_char_occurrence_at_position(str)
   -- bee -> { "b" = 1, "e" = 2 }
@@ -42,15 +30,15 @@ function FTHighlight:get_char_occurrence_at_position(str)
   -- bee -> { 1 = 1, 2 = 1, 3 = 2 }
   local char_occurrence_at_position = {}
 
-  for i = 1, #str do
-    local char = str:sub(i, i)
+  for index = 1, #str do
+    local char = str:sub(index, index)
 
     if char_to_num_occurrence[char] == nil then
       char_to_num_occurrence[char] = 0
     end
     char_to_num_occurrence[char] = char_to_num_occurrence[char] + 1
 
-    char_occurrence_at_position[i] = char_to_num_occurrence[char]
+    char_occurrence_at_position[index] = char_to_num_occurrence[char]
   end
 
   return char_occurrence_at_position
@@ -104,23 +92,25 @@ function FTHighlight:highlight(opts)
 
     local highlight_col_0_indexed = highlight_col_1_indexed - 1
 
-    self:apply_highlight {
-      row = row_0_indexed,
-      start_col = highlight_col_0_indexed,
-      end_col = highlight_col_0_indexed + 1,
-      hl_group = hl_group,
-    }
+    vim.hl.range(
+      0,
+      self.ns_id,
+      hl_group,
+      { row_0_indexed, highlight_col_0_indexed, },
+      { row_0_indexed, highlight_col_0_indexed + 1, }
+    )
   end
 
   self:toggle_on { highlighted_line = row_0_indexed, }
   vim.cmd "redraw"
 end
 
-function FTHighlight:maybe_clear_highlight()
+function FTHighlight:clear_highlight()
   if self.highlighted_line == nil then
     return
   end
   vim.api.nvim_buf_clear_namespace(0, self.ns_id, self.highlighted_line, self.highlighted_line + 1)
+  self:toggle_off()
 end
 
 return FTHighlight
