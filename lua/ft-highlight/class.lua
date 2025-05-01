@@ -65,7 +65,7 @@ function FTHighlight:highlight(opts)
   else
     -- highlight starting with the char before the cursor
     local backward_start = col_1_indexed - 1
-    local backward_subbed = curr_line:sub(1, backward_start + 1) -- exclusive
+    local backward_subbed = curr_line:sub(1, backward_start) -- inclusive!
     local backward_subbed_reversed = backward_subbed:reverse()
 
     orders = self:get_char_occurrence_at_position(backward_subbed_reversed)
