@@ -1,13 +1,13 @@
 local M = {}
 
 --- @class FTHighlightOpts
---- @field enable boolean Enable the plugin, defaults to `false`
+--- @field enabled boolean Enable the plugin, defaults to `false`
 
 --- @param opts FTHighlightOpts | nil
 M.setup = function(opts)
   opts = opts or {}
-  local enable = opts.enable or false
-  if not enable then return end
+  local enabled = opts.enabled or false
+  if not enabled then return end
 
   local FTHighlight = require "lua.ft-highlight.class"
   local ft_highlight = FTHighlight:new()
