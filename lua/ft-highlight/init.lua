@@ -9,7 +9,7 @@ M.setup = function(opts)
   local enable = opts.enable or false
   if not enable then return end
 
-  local FTHighlight = require "ft-highlight.class"
+  local FTHighlight = require "lua.ft-highlight.class"
   local ft_highlight = FTHighlight:new()
 
   --- @param on_key_opts { key: "f"|"F"|"t"|"T", forward: boolean }

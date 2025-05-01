@@ -1,6 +1,8 @@
+.PHONY: test
+
 install:
-	./.rocks/install.sh
+	luarocks --lua-version=5.1 install moonscript --local
+	luarocks --lua-version=5.1 install busted --local
 
 test: 
-	./.rocks/bin/busted
-
+	busted
