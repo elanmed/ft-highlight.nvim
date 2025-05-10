@@ -71,6 +71,37 @@ T["setup"]["explicit default_keymaps=false"] = function()
   eq(has_keymaps "none", true)
 end
 
+T["setup"]["highlight_pattern"] = function()
+  child.lua [[M = require "ft-highlight".setup { enabled = true, highlight_pattern = "[a-z]", }]]
+
+  local ns_id = child.api.nvim_create_namespace "FTHighlight"
+  eq(get_hl_names(ns_id), {})
+  child.type_keys "f"
+  eq(get_hl_names(ns_id), {
+    "FTHighlightDimmed", -- A
+    "FTHighlightFirst",  -- v
+    "FTHighlightFirst",  -- a
+    "FTHighlightDimmed", --
+    "FTHighlightSecond", -- a
+    "FTHighlightFirst",  -- t
+    "FTHighlightFirst",  -- e
+    "FTHighlightDimmed", --
+    "FTHighlightThird",  -- a
+    "FTHighlightFirst",  -- n
+    "FTHighlightDimmed", --
+    "FTHighlightDimmed", -- a
+    "FTHighlightFirst",  -- p
+    "FTHighlightSecond", -- p
+    "FTHighlightFirst",  -- l
+    "FTHighlightSecond", -- e
+    "FTHighlightDimmed", -- .
+    "FTHighlightDimmed", --
+  })
+  child.type_keys "A"
+  eq(get_hl_names(ns_id), {})
+end
+
+
 T["keypress"] = new_set {
   hooks = {
     pre_case = function()
