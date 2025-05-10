@@ -1,21 +1,17 @@
-.PHONY: install test clean clean-rocks clean-dev packadd
-
-install:
-	luarocks --lua-version=5.1 install moonscript --local
-	luarocks --lua-version=5.1 install busted --local
-
-test: 
-	eval $(luarocks path --lua-version 5.1 --bin) && busted
-
-clean: clean-rocks clean-dev
-
-clean-dev:
-	rm -rf ~/.local/share/nvim/site/pack/dev
-
-clean-rocks: 
-	rm -rf ~/.luarocks/bin/busted
-	rm -rf ~/.luarocks/bin/moonscript
+.PHONY: dev test test_file clean clean-dev
 
 dev:
 	mkdir -p ~/.local/share/nvim/site/pack/dev/start/ft-highlight.nvim
 	stow -d .. -t ~/.local/share/nvim/site/pack/dev/start/ft-highlight.nvim ft-highlight.nvim
+
+test:
+	nvim --headless --noplugin -u ./scripts/minimal_init.lua -c "lua MiniTest.run()"
+
+# Run test from file at `$FILE` environment variable
+test_file:
+	nvim --headless --noplugin -u ./scripts/minimal_init.lua -c "lua MiniTest.run_file('$(FILE)')"
+
+clean: clean-dev
+
+clean-dev:
+	rm -rf ~/.local/share/nvim/site/pack/dev

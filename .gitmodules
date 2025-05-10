@@ -1,6 +1,3 @@
-[submodule ".luals/addons/busted"]
-	path = .luals/addons/busted
-	url = https://github.com/LuaCATS/busted
-[submodule ".luals/addons/luassert"]
-	path = .luals/addons/luassert
-	url = https://github.com/LuaCATS/luassert
+[submodule "deps/mini.nvim"]
+	path = deps/mini.nvim
+	url = https://github.com/echasnovski/mini.nvim

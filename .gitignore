@@ -1,4 +1,0 @@
-.rocks/*
-!.rocks/install.sh
-test/xdg/local/share/nvim/
-test/xdg/local/state/nvim/

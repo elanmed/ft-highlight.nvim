@@ -9,12 +9,7 @@
   "diagnostics.disable": [
     "missing-fields"
   ],
-  "workspake.userThirdParty": [
-    ".luals/addons"
-  ],
   "workspace.library": [
-    "$VIMRUNTIME",
-    ".luals/addons/busted/library",
-    ".luals/addons/luassert/library"
+    "$VIMRUNTIME"
   ]
 }
