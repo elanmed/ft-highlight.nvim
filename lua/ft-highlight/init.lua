@@ -4,7 +4,6 @@ local ft_highlight = FTHighlight:new()
 local M = {}
 
 --- @class FTHighlightOpts
---- @field enabled boolean Enable the plugin. Defaults to `false`
 --- @field default_keymaps boolean Set keymaps for `f`, `F`, `t`, and `T`. Defaults to `true`
 --- @field highlight_pattern string A string pattern to determine if a character should be highlighted according to its occurrence. The pattern is passed to `string.match(str, pattern)` with the current character as `str` and the `highlight_pattern` opt as `pattern`. If `string.match` returns `true`, the character is highlighted as `FTHighlight{First,Second,Third}`, otherwise as `FTHighlightDimmed`. Defaults to `"."` (matches every character).
 
@@ -47,10 +46,7 @@ end
 --- @param opts FTHighlightOpts | nil
 M.setup = function(opts)
   opts = default(opts, {})
-  local enabled = default(opts.enabled, false)
   local default_keymaps = default(opts.default_keymaps, true)
-
-  if not enabled then return end
 
   vim.api.nvim_set_hl(0, "FTHighlightFirst", { link = "Normal", })
   vim.api.nvim_set_hl(0, "FTHighlightSecond", { link = "DiagnosticWarn", })

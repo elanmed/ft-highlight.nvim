@@ -51,29 +51,20 @@ end
 T["M"] = new_set()
 
 T["M"]["setup"] = new_set()
-T["M"]["setup"]["default enabled=false"] = function()
-  child.lua [[M = require "ft-highlight".setup()]]
-  eq(has_keymaps "none", true)
-end
-T["M"]["setup"]["explicit enabled=false"] = function()
-  child.lua [[M = require "ft-highlight".setup { enabled = false, }]]
-  eq(has_keymaps "none", true)
-end
-
 T["M"]["setup"]["default default_keymaps=true"] = function()
-  child.lua [[M = require "ft-highlight".setup { enabled = true, }]]
+  child.lua [[M = require "ft-highlight".setup() ]]
   eq(has_keymaps "all", true)
 end
 T["M"]["setup"]["explicit default_keymaps=true"] = function()
-  child.lua [[M = require "ft-highlight".setup { enabled = true, default_keymaps = true, }]]
+  child.lua [[M = require "ft-highlight".setup { default_keymaps = true, }]]
   eq(has_keymaps "all", true)
 end
 T["M"]["setup"]["explicit default_keymaps=false"] = function()
-  child.lua [[M = require "ft-highlight".setup { enabled = true, default_keymaps = false, }]]
+  child.lua [[M = require "ft-highlight".setup { default_keymaps = false, }]]
   eq(has_keymaps "none", true)
 end
 T["M"]["setup"]["highlight_pattern"] = function()
-  child.lua [[M = require "ft-highlight".setup { enabled = true, highlight_pattern = "[a-z]", }]]
+  child.lua [[M = require "ft-highlight".setup { highlight_pattern = "[a-z]", }]]
 
   local ns_id = child.api.nvim_create_namespace "FTHighlight"
   eq(get_hl_names(ns_id), {})
@@ -172,7 +163,7 @@ end
 T["keypress"] = new_set {
   hooks = {
     pre_case = function()
-      child.lua [[M = require "ft-highlight".setup { enabled = true, }]]
+      child.lua [[M = require "ft-highlight".setup() ]]
     end,
   },
 }
