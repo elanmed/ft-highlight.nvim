@@ -23,15 +23,20 @@ function FTHighlight:toggle_off()
   self.highlighted_line = nil
 end
 
---- @param str string
-function FTHighlight:get_char_occurrence_at_position(str)
+--- @param opts { str: string, highlight_pattern: string }
+function FTHighlight:get_char_occurrence_at_position(opts)
   -- bee -> { "b" = 1, "e" = 2 }
   local char_to_num_occurrence = {}
   -- bee -> { 1 = 1, 2 = 1, 3 = 2 }
   local char_occurrence_at_position = {}
 
-  for index = 1, #str do
-    local char = str:sub(index, index)
+  local pattern = opts.highlight_pattern or "."
+
+  for index = 1, #opts.str do
+    local char = opts.str:sub(index, index)
+    if not opts.str:match(pattern) then
+      char_occurrence_at_position[index] = -1
+    end
 
     if char_to_num_occurrence[char] == nil then
       char_to_num_occurrence[char] = 0
@@ -44,8 +49,8 @@ function FTHighlight:get_char_occurrence_at_position(str)
   return char_occurrence_at_position
 end
 
---- @param opts { forward: boolean }
-function FTHighlight:highlight(opts)
+--- @param opts { forward: boolean, highlight_pattern: string }
+function FTHighlight:add_highlight(opts)
   local curr_line = vim.api.nvim_get_current_line()
   local cursor_pos = vim.api.nvim_win_get_cursor(0)
 
@@ -61,14 +66,17 @@ function FTHighlight:highlight(opts)
     local forward_start = col_1_indexed + 1
     local forward_subbed = curr_line:sub(forward_start)
 
-    orders = self:get_char_occurrence_at_position(forward_subbed)
+    orders = self:get_char_occurrence_at_position { str = forward_subbed, highlight_pattern = opts.highlight_pattern, }
   else
     -- highlight starting with the char before the cursor
     local backward_start = col_1_indexed - 1
     local backward_subbed = curr_line:sub(1, backward_start) -- inclusive!
     local backward_subbed_reversed = backward_subbed:reverse()
 
-    orders = self:get_char_occurrence_at_position(backward_subbed_reversed)
+    orders = self:get_char_occurrence_at_position {
+      str = backward_subbed_reversed,
+      highlight_pattern = opts.highlight_pattern,
+    }
   end
 
   for offset, value in pairs(orders) do
