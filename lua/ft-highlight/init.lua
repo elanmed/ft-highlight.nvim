@@ -33,8 +33,10 @@ M.on_key = function(opts)
   return opts.key .. input
 end
 
---- @param val any
---- @param default_val any
+--- @generic T
+--- @param val T | nil
+--- @param default_val T
+--- @return T
 local function default(val, default_val)
   if val == nil then
     return default_val
@@ -44,9 +46,10 @@ end
 
 --- @param opts FTHighlightOpts | nil
 M.setup = function(opts)
-  opts = opts or {}
+  opts = default(opts, {})
   local enabled = default(opts.enabled, false)
   local default_keymaps = default(opts.default_keymaps, true)
+
   if not enabled then return end
 
   vim.api.nvim_set_hl(0, "FTHighlightFirst", { link = "Normal", })
@@ -55,18 +58,28 @@ M.setup = function(opts)
   vim.api.nvim_set_hl(0, "FTHighlightDimmed", { link = "Comment", })
 
   if default_keymaps then
-    vim.keymap.set({ "n", "v", "o", }, "f",
+    vim.keymap.set(
+      { "n", "v", "o", },
+      "f",
       function() return M.on_key { key = "f", forward = true, highlight_pattern = opts.highlight_pattern, } end,
-      { expr = true, })
-    vim.keymap.set({ "n", "v", "o", }, "F",
+      { expr = true, }
+    )
+    vim.keymap.set(
+      { "n", "v", "o", },
+      "F",
       function() return M.on_key { key = "F", forward = false, highlight_pattern = opts.highlight_pattern, } end,
-      { expr = true, })
-    vim.keymap.set({ "n", "v", "o", }, "t",
+      { expr = true, }
+    )
+    vim.keymap.set({ "n", "v", "o", },
+      "t",
       function() return M.on_key { key = "t", forward = true, highlight_pattern = opts.highlight_pattern, } end,
-      { expr = true, })
-    vim.keymap.set({ "n", "v", "o", }, "T",
+      { expr = true, }
+    )
+    vim.keymap.set({ "n", "v", "o", },
+      "T",
       function() return M.on_key { key = "T", forward = false, highlight_pattern = opts.highlight_pattern, } end,
-      { expr = true, })
+      { expr = true, }
+    )
   end
 end
 

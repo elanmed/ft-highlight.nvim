@@ -48,30 +48,31 @@ local function has_keymaps(variant)
   return true
 end
 
-T["setup"] = new_set()
-T["setup"]["default enabled=false"] = function()
+T["M"] = new_set()
+
+T["M"]["setup"] = new_set()
+T["M"]["setup"]["default enabled=false"] = function()
   child.lua [[M = require "ft-highlight".setup()]]
   eq(has_keymaps "none", true)
 end
-T["setup"]["explicit enabled=false"] = function()
+T["M"]["setup"]["explicit enabled=false"] = function()
   child.lua [[M = require "ft-highlight".setup { enabled = false, }]]
   eq(has_keymaps "none", true)
 end
 
-T["setup"]["default default_keymaps=true"] = function()
+T["M"]["setup"]["default default_keymaps=true"] = function()
   child.lua [[M = require "ft-highlight".setup { enabled = true, }]]
   eq(has_keymaps "all", true)
 end
-T["setup"]["explicit default_keymaps=true"] = function()
+T["M"]["setup"]["explicit default_keymaps=true"] = function()
   child.lua [[M = require "ft-highlight".setup { enabled = true, default_keymaps = true, }]]
   eq(has_keymaps "all", true)
 end
-T["setup"]["explicit default_keymaps=false"] = function()
+T["M"]["setup"]["explicit default_keymaps=false"] = function()
   child.lua [[M = require "ft-highlight".setup { enabled = true, default_keymaps = false, }]]
   eq(has_keymaps "none", true)
 end
-
-T["setup"]["highlight_pattern"] = function()
+T["M"]["setup"]["highlight_pattern"] = function()
   child.lua [[M = require "ft-highlight".setup { enabled = true, highlight_pattern = "[a-z]", }]]
 
   local ns_id = child.api.nvim_create_namespace "FTHighlight"
@@ -98,6 +99,72 @@ T["setup"]["highlight_pattern"] = function()
     "FTHighlightDimmed", --
   })
   child.type_keys "A"
+  eq(get_hl_names(ns_id), {})
+end
+
+T["M"]["setup"] = new_set()
+T["M"]["add_highlight,clear_highlight"] = function()
+  local ns_id = child.api.nvim_create_namespace "FTHighlight"
+  eq(get_hl_names(ns_id), {})
+  child.lua [[require "ft-highlight".add_highlight { forward = true, highlight_pattern = "[a-z]", }]]
+  eq(get_hl_names(ns_id), {
+    "FTHighlightDimmed", -- A
+    "FTHighlightFirst",  -- v
+    "FTHighlightFirst",  -- a
+    "FTHighlightDimmed", --
+    "FTHighlightSecond", -- a
+    "FTHighlightFirst",  -- t
+    "FTHighlightFirst",  -- e
+    "FTHighlightDimmed", --
+    "FTHighlightThird",  -- a
+    "FTHighlightFirst",  -- n
+    "FTHighlightDimmed", --
+    "FTHighlightDimmed", -- a
+    "FTHighlightFirst",  -- p
+    "FTHighlightSecond", -- p
+    "FTHighlightFirst",  -- l
+    "FTHighlightSecond", -- e
+    "FTHighlightDimmed", -- .
+    "FTHighlightDimmed", --
+  })
+  child.lua [[require "ft-highlight".clear_highlight()]]
+  eq(get_hl_names(ns_id), {})
+end
+T["M"]["on_key"] = function()
+  child.lua [[
+  vim.keymap.set(
+    { "n", "v", "o", },
+    "f",
+    function() return require "ft-highlight".on_key { key = "f", forward = false, highlight_pattern = "[a-z]", } end,
+    { expr = true, }
+  )
+  ]]
+
+  child.type_keys "$"
+  local ns_id = child.api.nvim_create_namespace "FTHighlight"
+  eq(get_hl_names(ns_id), {})
+  child.type_keys "f"
+  eq(get_hl_names(ns_id), {
+    "FTHighlightDimmed", --
+    "FTHighlightDimmed", -- A
+    "FTHighlightFirst",  -- v
+    "FTHighlightDimmed", -- a
+    "FTHighlightDimmed", --
+    "FTHighlightThird",  -- a
+    "FTHighlightFirst",  -- t
+    "FTHighlightSecond", -- e
+    "FTHighlightDimmed", --
+    "FTHighlightSecond", -- a
+    "FTHighlightFirst",  -- n
+    "FTHighlightDimmed", --
+    "FTHighlightFirst",  -- a
+    "FTHighlightSecond", -- p
+    "FTHighlightFirst",  -- p
+    "FTHighlightFirst",  -- l
+    "FTHighlightFirst",  -- e
+    "FTHighlightDimmed", -- .
+  })
+  child.type_keys "."
   eq(get_hl_names(ns_id), {})
 end
 
@@ -138,7 +205,7 @@ T["keypress"]["f"]["highlights correctly from the first char"] = function()
   eq(get_hl_names(ns_id), {})
 end
 T["keypress"]["f"]["highlights correctly from a middle first char"] = function()
-  child.type_keys "f "
+  child.type_keys "4l"
   local ns_id = child.api.nvim_create_namespace "FTHighlight"
   eq(get_hl_names(ns_id), {})
   child.type_keys "f"
@@ -162,7 +229,7 @@ T["keypress"]["f"]["highlights correctly from a middle first char"] = function()
   eq(get_hl_names(ns_id), {})
 end
 T["keypress"]["f"]["highlights correctly from the last char"] = function()
-  child.type_keys "f.l"
+  child.type_keys "$"
   local ns_id = child.api.nvim_create_namespace "FTHighlight"
   eq(get_hl_names(ns_id), {})
   child.type_keys "f"
@@ -173,7 +240,7 @@ end
 
 T["keypress"]["F"] = new_set()
 T["keypress"]["F"]["highlights correctly from the last char"] = function()
-  child.type_keys "f.l"
+  child.type_keys "$"
   local ns_id = child.api.nvim_create_namespace "FTHighlight"
   eq(get_hl_names(ns_id), {})
   child.type_keys "F"
@@ -201,7 +268,7 @@ T["keypress"]["F"]["highlights correctly from the last char"] = function()
   eq(get_hl_names(ns_id), {})
 end
 T["keypress"]["F"]["highlights correctly from a middle char"] = function()
-  child.type_keys "f.F "
+  child.type_keys "$7h"
   local ns_id = child.api.nvim_create_namespace "FTHighlight"
   eq(get_hl_names(ns_id), {})
   child.type_keys "F"
