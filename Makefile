@@ -7,7 +7,6 @@ dev:
 test:
 	nvim --headless --noplugin -u ./scripts/minimal_init.lua -c "lua MiniTest.run()"
 
-# Run test from file at `$FILE` environment variable
 test_file:
 	nvim --headless --noplugin -u ./scripts/minimal_init.lua -c "lua MiniTest.run_file('$(FILE)')"
 
