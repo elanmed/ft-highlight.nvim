@@ -34,8 +34,9 @@ function FTHighlight:get_char_occurrence_at_position(opts)
 
   for index = 1, #opts.str do
     local char = opts.str:sub(index, index)
-    if not opts.str:match(pattern) then
+    if not char:match(pattern) then
       char_occurrence_at_position[index] = -1
+      goto continue
     end
 
     if char_to_num_occurrence[char] == nil then
@@ -44,6 +45,8 @@ function FTHighlight:get_char_occurrence_at_position(opts)
     char_to_num_occurrence[char] = char_to_num_occurrence[char] + 1
 
     char_occurrence_at_position[index] = char_to_num_occurrence[char]
+
+    ::continue::
   end
 
   return char_occurrence_at_position
