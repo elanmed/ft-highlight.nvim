@@ -6,7 +6,7 @@ local M = {}
 --- @class FTHighlightOpts
 --- @field enabled boolean Enable the plugin. Defaults to `false`
 --- @field default_keymaps boolean Set keymaps for `f`, `F`, `t`, and `T`. Defaults to `true`
---- @field highlight_pattern boolean A string pattern to determine if a character should be highlighted according to its occurrence. The pattern is passed to `string.match(str, pattern)` with the current character as `str` and the `highlight_pattern` opt as `pattern`. If `string.match` returns `true`, the character is highlighted as `FTHighlight{First,Second,Third}`, otherwise as `FTHighlightDimmed`. Defaults to `"."` (matches every character).
+--- @field highlight_pattern string A string pattern to determine if a character should be highlighted according to its occurrence. The pattern is passed to `string.match(str, pattern)` with the current character as `str` and the `highlight_pattern` opt as `pattern`. If `string.match` returns `true`, the character is highlighted as `FTHighlight{First,Second,Third}`, otherwise as `FTHighlightDimmed`. Defaults to `"."` (matches every character).
 
 --- @param opts { forward: boolean, highlight_pattern: string }
 M.add_highlight = function(opts)
@@ -46,13 +46,17 @@ M.setup = function(opts)
   vim.api.nvim_set_hl(0, "FTHighlightDimmed", { link = "Comment", })
 
   if default_keymaps then
-    vim.keymap.set({ "n", "v", "o", }, "f", function() return M.on_key { key = "f", forward = true, } end,
+    vim.keymap.set({ "n", "v", "o", }, "f",
+      function() return M.on_key { key = "f", forward = true, highlight_pattern = opts.highlight_pattern, } end,
       { expr = true, })
-    vim.keymap.set({ "n", "v", "o", }, "F", function() return M.on_key { key = "F", forward = false, } end,
+    vim.keymap.set({ "n", "v", "o", }, "F",
+      function() return M.on_key { key = "F", forward = false, highlight_pattern = opts.highlight_pattern, } end,
       { expr = true, })
-    vim.keymap.set({ "n", "v", "o", }, "t", function() return M.on_key { key = "t", forward = true, } end,
+    vim.keymap.set({ "n", "v", "o", }, "t",
+      function() return M.on_key { key = "t", forward = true, highlight_pattern = opts.highlight_pattern, } end,
       { expr = true, })
-    vim.keymap.set({ "n", "v", "o", }, "T", function() return M.on_key { key = "T", forward = false, } end,
+    vim.keymap.set({ "n", "v", "o", }, "T",
+      function() return M.on_key { key = "T", forward = false, highlight_pattern = opts.highlight_pattern, } end,
       { expr = true, })
   end
 end
