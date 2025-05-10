@@ -7,7 +7,7 @@ local T = new_set {
   hooks = {
     pre_case = function()
       child.restart { "-u", "scripts/minimal_init.lua", }
-      child.lua [[M = require "ft-highlight".setup { enabled = true, }]]
+      child.api.nvim_buf_set_lines(0, 0, -1, true, { " Ava ate an apple. ", })
     end,
     post_once = child.stop,
   },
@@ -24,10 +24,62 @@ local function get_hl_names(ns_id)
   return vim.tbl_map(function(mark) return mark[4].hl_group end, marks)
 end
 
-T["forward=true"] = new_set()
+--- @param key string
+--- @param mode string
+local function has_keymap(key, mode)
+  local abbr = false
+  return child.fn.maparg(key, mode, abbr) ~= ""
+end
 
-T["forward=true"]["highlights correctly from the first char"] = function()
-  child.api.nvim_buf_set_lines(0, 0, -1, true, { "_Ava ate an apple.", })
+--- @param variant "all" | "none"
+local function has_keymaps(variant)
+  for _, key in pairs { "f", "F", "t", "T", } do
+    for _, mode in pairs { "n", "v", "o", } do
+      if variant == "all" then
+        if not has_keymap(key, mode) then
+          return false
+        end
+      else
+        if has_keymap(key, mode) then return false end
+      end
+    end
+  end
+
+  return true
+end
+
+T["setup"] = new_set()
+T["setup"]["default enabled=false"] = function()
+  child.lua [[M = require "ft-highlight".setup()]]
+  eq(has_keymaps "none", true)
+end
+T["setup"]["explicit enabled=false"] = function()
+  child.lua [[M = require "ft-highlight".setup { enabled = false, }]]
+  eq(has_keymaps "none", true)
+end
+
+T["setup"]["default default_keymaps=true"] = function()
+  child.lua [[M = require "ft-highlight".setup { enabled = true, }]]
+  eq(has_keymaps "all", true)
+end
+T["setup"]["explicit default_keymaps=true"] = function()
+  child.lua [[M = require "ft-highlight".setup { enabled = true, default_keymaps = true, }]]
+  eq(has_keymaps "all", true)
+end
+T["setup"]["explicit default_keymaps=false"] = function()
+  child.lua [[M = require "ft-highlight".setup { enabled = true, default_keymaps = false, }]]
+  eq(has_keymaps "none", true)
+end
+
+T["keypress"] = new_set {
+  hooks = {
+    pre_case = function()
+      child.lua [[M = require "ft-highlight".setup { enabled = true, }]]
+    end,
+  },
+}
+T["keypress"]["f"] = new_set()
+T["keypress"]["f"]["highlights correctly from the first char"] = function()
   local ns_id = child.api.nvim_create_namespace "FTHighlight"
   eq(get_hl_names(ns_id), {})
   child.type_keys "f"
@@ -49,13 +101,12 @@ T["forward=true"]["highlights correctly from the first char"] = function()
     "FTHighlightFirst",  -- l
     "FTHighlightSecond", -- e
     "FTHighlightFirst",  -- .
+    "FTHighlightDimmed", --
   })
   child.type_keys "A"
   eq(get_hl_names(ns_id), {})
 end
-
-T["forward=true"]["highlights correctly from a middle first char"] = function()
-  child.api.nvim_buf_set_lines(0, 0, -1, true, { "Ava ate an apple.", })
+T["keypress"]["f"]["highlights correctly from a middle first char"] = function()
   child.type_keys "f "
   local ns_id = child.api.nvim_create_namespace "FTHighlight"
   eq(get_hl_names(ns_id), {})
@@ -74,14 +125,13 @@ T["forward=true"]["highlights correctly from a middle first char"] = function()
     "FTHighlightFirst",  -- l
     "FTHighlightSecond", -- e
     "FTHighlightFirst",  -- .
+    "FTHighlightThird",  --
   })
   child.type_keys "a"
   eq(get_hl_names(ns_id), {})
 end
-
-T["forward=true"]["highlights correctly from the last char"] = function()
-  child.api.nvim_buf_set_lines(0, 0, -1, true, { "Ava ate an apple.", })
-  child.type_keys "f."
+T["keypress"]["f"]["highlights correctly from the last char"] = function()
+  child.type_keys "f.l"
   local ns_id = child.api.nvim_create_namespace "FTHighlight"
   eq(get_hl_names(ns_id), {})
   child.type_keys "f"
@@ -90,15 +140,14 @@ T["forward=true"]["highlights correctly from the last char"] = function()
   eq(get_hl_names(ns_id), {})
 end
 
-T["forward=false"] = new_set()
-
-T["forward=false"]["highlights correctly from the last char"] = function()
-  child.api.nvim_buf_set_lines(0, 0, -1, true, { "Ava ate an apple._", })
-  child.type_keys "f_"
+T["keypress"]["F"] = new_set()
+T["keypress"]["F"]["highlights correctly from the last char"] = function()
+  child.type_keys "f.l"
   local ns_id = child.api.nvim_create_namespace "FTHighlight"
   eq(get_hl_names(ns_id), {})
   child.type_keys "F"
   eq(get_hl_names(ns_id), {
+    "FTHighlightDimmed", --
     "FTHighlightFirst",  -- A
     "FTHighlightFirst",  -- v
     "FTHighlightDimmed", -- a
@@ -120,14 +169,13 @@ T["forward=false"]["highlights correctly from the last char"] = function()
   child.type_keys "."
   eq(get_hl_names(ns_id), {})
 end
-
-T["forward=false"]["highlights correctly from a middle char"] = function()
-  child.api.nvim_buf_set_lines(0, 0, -1, true, { "Ava ate an apple.", })
+T["keypress"]["F"]["highlights correctly from a middle char"] = function()
   child.type_keys "f.F "
   local ns_id = child.api.nvim_create_namespace "FTHighlight"
   eq(get_hl_names(ns_id), {})
   child.type_keys "F"
   eq(get_hl_names(ns_id), {
+    "FTHighlightThird",  --
     "FTHighlightFirst",  -- A
     "FTHighlightFirst",  -- v
     "FTHighlightThird",  -- a
@@ -142,9 +190,7 @@ T["forward=false"]["highlights correctly from a middle char"] = function()
   child.type_keys "."
   eq(get_hl_names(ns_id), {})
 end
-
-T["forward=false"]["highlights correctly from the first char"] = function()
-  child.api.nvim_buf_set_lines(0, 0, -1, true, { "Ava ate an apple.", })
+T["keypress"]["F"]["highlights correctly from the first char"] = function()
   local ns_id = child.api.nvim_create_namespace "FTHighlight"
   eq(get_hl_names(ns_id), {})
   child.type_keys "F"

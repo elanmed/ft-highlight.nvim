@@ -33,11 +33,20 @@ M.on_key = function(opts)
   return opts.key .. input
 end
 
+--- @param val any
+--- @param default_val any
+local function default(val, default_val)
+  if val == nil then
+    return default_val
+  end
+  return val
+end
+
 --- @param opts FTHighlightOpts | nil
 M.setup = function(opts)
   opts = opts or {}
-  local enabled = opts.enabled or false
-  local default_keymaps = opts.default_keymaps or true
+  local enabled = default(opts.enabled, false)
+  local default_keymaps = default(opts.default_keymaps, true)
   if not enabled then return end
 
   vim.api.nvim_set_hl(0, "FTHighlightFirst", { link = "Normal", })
