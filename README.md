@@ -15,7 +15,11 @@ on [highlight groups](#highlight-groups).
 
 ## Status
  
-A WIP, well [tested](https://github.com/ElanMedoff/ft-highlight.nvim/tree/master/tests) but may have some bugs.
+A WIP, tested but may have some bugs.
+
+TODO:
+- [] Add vim docs
+- [] Run tests on side branches
 
 ## Setup
 
