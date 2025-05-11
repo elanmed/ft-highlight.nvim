@@ -1,0 +1,109 @@
+*ft-highlight.txt*                                    Last change: 2025 May 10
+
+==============================================================================
+Table of Contents                             *ft-highlight-table-of-contents*
+
+Status ................................................. |ft-highlight-status|
+Setup ................................................... |ft-highlight-setup|
+Highlight Groups ............................. |ft-highlight-highlight-groups|
+Exported functions ......................... |ft-highlight-exported-functions|
+`add_highlight` ................................. |ft-highlight-add_highlight|
+`clear_highlight` ............................. |ft-highlight-clear_highlight|
+
+==============================================================================
+FT-HIGHLIGHT.NVIM                             *ft-highlight-ft-highlight.nvim*
+
+
+Add highlights to a `{f,F,t,T}` movement to visualize the number of jumps to a
+given character.
+
+demo <https://elanmed.dev/nvim-plugins/ft-highlight.png>
+
+In the example above:
+
+- 1 jump is white
+- 2 jumps is yellow
+- 3 jumps is red
+- 4+ jumps is grey
+Colors are based on existing highlight groups defined by your colorscheme, see
+the section on highlight groups <#highlight-groups>.
+
+
+------------------------------------------------------------------------------
+STATUS                                                   *ft-highlight-status*
+
+
+A WIP, tested but may have some bugs.
+
+TODO:
+
+- [x] Add vim docs
+- [ ] Run tests on side branches
+
+------------------------------------------------------------------------------
+SETUP                                                     *ft-highlight-setup*
+
+
+>lua
+    require("ft-highlight").setup({
+      -- Set keymaps for `f`, `F`, `t`, and `T`. Defaults to `true`
+      default_keymaps = true, 
+    
+      -- A string pattern to determine if a character should be highlighted according to its 
+      -- occurrence. The pattern is passed to `string.match(str, pattern)` with the current 
+      -- character as `str` and the `highlight_pattern` opt as `pattern`. If `string.match` 
+      -- returns a match, the character is highlighted as `FTHighlight{First,Second,Third}`, 
+      -- otherwise as `FTHighlightDimmed`. Occurrences beyond the third are also highlighted 
+      -- as `FTHighlightDimmed`. 
+      -- Defaults to `"."` (matches every character).
+      highlight_pattern = "."
+    })
+<
+
+------------------------------------------------------------------------------
+HIGHLIGHT GROUPS                               *ft-highlight-highlight-groups*
+
+
+`ft-highlight` uses four highlight groups with the following defaults:
+
+>lua
+    vim.api.nvim_set_hl(0, "FTHighlightFirst", { link = "Normal", })
+    vim.api.nvim_set_hl(0, "FTHighlightSecond", { link = "DiagnosticWarn", })
+    vim.api.nvim_set_hl(0, "FTHighlightThird", { link = "DiagnosticError", })
+    vim.api.nvim_set_hl(0, "FTHighlightDimmed", { link = "Comment", })
+<
+To override, update the highlight group after calling the `setup` function:
+
+>lua
+    require("ft-highlight").setup()
+    
+    vim.api.nvim_set_hl(0, "FTHighlightFirst", { link = "Normal", underline = true })
+<
+
+------------------------------------------------------------------------------
+EXPORTED FUNCTIONS                           *ft-highlight-exported-functions*
+
+
+
+                                                                              
+`ADD_HIGHLIGHT`                                   *ft-highlight-add_highlight*
+
+Accepts an `opts` argument of the following type:
+
+>lua
+    --- @class AddHighlightOpts
+    --- @field forward boolean The direction in which to highlight the char occurrences
+    --- @field highlight_pattern string (See highlight_pattern in `setup`)
+<
+Returns no value.
+
+
+                                                                              
+`CLEAR_HIGHLIGHT`                               *ft-highlight-clear_highlight*
+
+A function that clears the currently highlighted line.
+
+Accepts no arguments, returns no value.
+
+
+vim:tw=78:ts=8:ft=help:norl:
