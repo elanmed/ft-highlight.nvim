@@ -30,13 +30,20 @@ end
 --- @param opts { key: "f"|"F"|"t"|"T", forward: boolean, highlight_pattern: string }
 local function on_key(opts)
   ft_highlight:add_highlight { forward = opts.forward, highlight_pattern = opts.highlight_pattern, }
-  local ok, input = pcall(vim.fn.nr2char, vim.fn.getchar())
+  local ok, input = pcall(vim.fn.getcharstr)
   ft_highlight:clear_highlight()
 
   if not ok then
     return opts.key
   end
   return opts.key .. input
+end
+
+--- @param hl_name string
+local function get_hl_fg(hl_name)
+  local hl_id = vim.api.nvim_get_hl_id_by_name(hl_name)
+  local hl = vim.api.nvim_get_hl(0, { id = hl_id, })
+  return hl.fg
 end
 
 --- @class FTHighlightOpts
@@ -47,10 +54,10 @@ M.setup = function(opts)
   opts = default(opts, {})
   local default_keymaps = default(opts.default_keymaps, true)
 
-  vim.api.nvim_set_hl(0, "FTHighlightFirst", { link = "Normal", })
-  vim.api.nvim_set_hl(0, "FTHighlightSecond", { link = "DiagnosticWarn", })
-  vim.api.nvim_set_hl(0, "FTHighlightThird", { link = "DiagnosticError", })
-  vim.api.nvim_set_hl(0, "FTHighlightDimmed", { link = "Comment", })
+  vim.api.nvim_set_hl(0, "FTHighlightFirst", { fg = get_hl_fg "Normal", })
+  vim.api.nvim_set_hl(0, "FTHighlightSecond", { fg = get_hl_fg "DiagnosticWarn", bold = true, })
+  vim.api.nvim_set_hl(0, "FTHighlightThird", { fg = get_hl_fg "DiagnosticError", bold = true, })
+  vim.api.nvim_set_hl(0, "FTHighlightDimmed", { fg = get_hl_fg "Comment", })
 
   if default_keymaps then
     vim.keymap.set(
