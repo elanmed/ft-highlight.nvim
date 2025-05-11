@@ -18,8 +18,8 @@ on [highlight groups](#highlight-groups).
 A WIP, tested but may have some bugs.
 
 TODO:
-- [] Add vim docs
-- [] Run tests on side branches
+- [ ] Add vim docs
+- [ ] Run tests on side branches
 
 ## Setup
 
