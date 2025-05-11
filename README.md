@@ -2,7 +2,7 @@
 
 Add highlights to a `{f,F,t,T}` movement to visualize the number of jumps to a given character.
 
-[demo](https://elanmed.dev/nvim-plugins/ft-highlight.png)
+![demo](https://elanmed.dev/nvim-plugins/ft-highlight.png)
 
 ## Setup
 
