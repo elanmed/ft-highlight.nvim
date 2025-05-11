@@ -1,23 +1,34 @@
 local FTHighlight = require "ft-highlight.class"
 local ft_highlight = FTHighlight:new()
 
-local M = {}
-
---- @class FTHighlightOpts
---- @field default_keymaps boolean Set keymaps for `f`, `F`, `t`, and `T`. Defaults to `true`
---- @field highlight_pattern string A string pattern to determine if a character should be highlighted according to its occurrence. The pattern is passed to `string.match(str, pattern)` with the current character as `str` and the `highlight_pattern` opt as `pattern`. If `string.match` returns `true`, the character is highlighted as `FTHighlight{First,Second,Third}`, otherwise as `FTHighlightDimmed`. Defaults to `"."` (matches every character).
-
---- @param opts { forward: boolean, highlight_pattern: string }
-M.add_highlight = function(opts)
-  return ft_highlight:add_highlight(opts)
+--- @generic T
+--- @param val T | nil
+--- @param default_val T
+--- @return T
+local function default(val, default_val)
+  if val == nil then
+    return default_val
+  end
+  return val
 end
 
+local M = {}
+
+--- @class AddHighlightOpts
+--- @field forward boolean The direction in which to count the char occurrences
+--- @field highlight_pattern string A string pattern to determine if a character should be highlighted according to its occurrence. See FTHighlightOpts.highlight_pattern
+--- @param opts AddHighlightOpts
+M.add_highlight = function(opts)
+  ft_highlight:add_highlight(opts)
+end
+
+
 M.clear_highlight = function()
-  return ft_highlight:clear_highlight()
+  ft_highlight:clear_highlight()
 end
 
 --- @param opts { key: "f"|"F"|"t"|"T", forward: boolean, highlight_pattern: string }
-M.on_key = function(opts)
+local function on_key(opts)
   ft_highlight:add_highlight { forward = opts.forward, highlight_pattern = opts.highlight_pattern, }
   local ok, input = pcall(vim.fn.nr2char, vim.fn.getchar())
 
@@ -32,17 +43,9 @@ M.on_key = function(opts)
   return opts.key .. input
 end
 
---- @generic T
---- @param val T | nil
---- @param default_val T
---- @return T
-local function default(val, default_val)
-  if val == nil then
-    return default_val
-  end
-  return val
-end
-
+--- @class FTHighlightOpts
+--- @field default_keymaps boolean Set keymaps for `f`, `F`, `t`, and `T`. Defaults to `true`
+--- @field highlight_pattern string A string pattern to determine if a character should be highlighted according to its occurrence. The pattern is passed to `string.match(str, pattern)` with the current character as `str` and the `highlight_pattern` opt as `pattern`. If `string.match` returns `true`, the character is highlighted as `FTHighlight{First,Second,Third}`, otherwise as `FTHighlightDimmed`. Defaults to `"."` (matches every character).
 --- @param opts FTHighlightOpts | nil
 M.setup = function(opts)
   opts = default(opts, {})
@@ -57,23 +60,23 @@ M.setup = function(opts)
     vim.keymap.set(
       { "n", "v", "o", },
       "f",
-      function() return M.on_key { key = "f", forward = true, highlight_pattern = opts.highlight_pattern, } end,
+      function() return on_key { key = "f", forward = true, highlight_pattern = opts.highlight_pattern, } end,
       { expr = true, }
     )
     vim.keymap.set(
       { "n", "v", "o", },
       "F",
-      function() return M.on_key { key = "F", forward = false, highlight_pattern = opts.highlight_pattern, } end,
+      function() return on_key { key = "F", forward = false, highlight_pattern = opts.highlight_pattern, } end,
       { expr = true, }
     )
     vim.keymap.set({ "n", "v", "o", },
       "t",
-      function() return M.on_key { key = "t", forward = true, highlight_pattern = opts.highlight_pattern, } end,
+      function() return on_key { key = "t", forward = true, highlight_pattern = opts.highlight_pattern, } end,
       { expr = true, }
     )
     vim.keymap.set({ "n", "v", "o", },
       "T",
-      function() return M.on_key { key = "T", forward = false, highlight_pattern = opts.highlight_pattern, } end,
+      function() return on_key { key = "T", forward = false, highlight_pattern = opts.highlight_pattern, } end,
       { expr = true, }
     )
   end
