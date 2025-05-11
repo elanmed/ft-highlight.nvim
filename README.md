@@ -4,6 +4,15 @@ Add highlights to a `{f,F,t,T}` movement to visualize the number of jumps to a g
 
 ![demo](https://elanmed.dev/nvim-plugins/ft-highlight.png)
 
+In the example above:
+- 1 jump is white
+- 2 jumps is yellow
+- 3 jumps is red
+- 4+ jumps is grey
+
+Colors are based on existing highlight groups defined by your colorscheme, see the section
+on [highlight groups](#highlight-groups)
+
 ## Setup
 
 ```lua
