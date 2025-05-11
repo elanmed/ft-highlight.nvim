@@ -44,10 +44,10 @@ require("ft-highlight").setup({
 `ft-highlight` uses four highlight groups with the following defaults:
 
 ```lua
-vim.api.nvim_set_hl(0, "FTHighlightFirst", { link = "Normal", })
-vim.api.nvim_set_hl(0, "FTHighlightSecond", { link = "DiagnosticWarn", })
-vim.api.nvim_set_hl(0, "FTHighlightThird", { link = "DiagnosticError", })
-vim.api.nvim_set_hl(0, "FTHighlightDimmed", { link = "Comment", })
+vim.api.nvim_set_hl(0, "FTHighlightFirst", { fg = get_hl_fg "Normal", })
+vim.api.nvim_set_hl(0, "FTHighlightSecond", { fg = get_hl_fg "DiagnosticWarn", bold = true, })
+vim.api.nvim_set_hl(0, "FTHighlightThird", { fg = get_hl_fg "DiagnosticError", bold = true, })
+vim.api.nvim_set_hl(0, "FTHighlightDimmed", { fg = get_hl_fg "Comment", })
 ```
 
 To override, update the highlight group after calling the `setup` function:
@@ -55,7 +55,8 @@ To override, update the highlight group after calling the `setup` function:
 ```lua
 require("ft-highlight").setup()
 
-vim.api.nvim_set_hl(0, "FTHighlightFirst", { link = "Normal", underline = true })
+local fg = vim.api.nvim_get_hl(0, { name = "Normal", }).fg
+vim.api.nvim_set_hl(0, "FTHighlightFirst", { fg = fg, underline = true })
 ```
 
 ## Exported functions

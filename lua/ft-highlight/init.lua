@@ -41,8 +41,7 @@ end
 
 --- @param hl_name string
 local function get_hl_fg(hl_name)
-  local hl_id = vim.api.nvim_get_hl_id_by_name(hl_name)
-  local hl = vim.api.nvim_get_hl(0, { id = hl_id, })
+  local hl = vim.api.nvim_get_hl(0, { name = hl_name, })
   return hl.fg
 end
 
