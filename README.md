@@ -11,10 +11,12 @@ require("ft-highlight").setup({
   -- Set keymaps for `f`, `F`, `t`, and `T`. Defaults to `true`
   default_keymaps = true, 
 
-  -- A string pattern to determine if a character should be highlighted according to its occurrence. The pattern is 
-  -- passed to `string.match(str, pattern)` with the current character as `str` and the `highlight_pattern` opt as 
-  -- `pattern`. If `string.match` returns a match, the character is highlighted as `FTHighlight{First,Second,Third}`, 
-  -- otherwise as `FTHighlightDimmed`. Occurrences beyond the third are also highlighted as `FTHighlightDimmed`. 
+  -- A string pattern to determine if a character should be highlighted according to its 
+  -- occurrence. The pattern is passed to `string.match(str, pattern)` with the current 
+  -- character as `str` and the `highlight_pattern` opt as `pattern`. If `string.match` 
+  -- returns a match, the character is highlighted as `FTHighlight{First,Second,Third}`, 
+  -- otherwise as `FTHighlightDimmed`. Occurrences beyond the third are also highlighted 
+  -- as `FTHighlightDimmed`. 
   -- Defaults to `"."` (matches every character).
   highlight_pattern = "."
 })
@@ -36,7 +38,7 @@ To override, update the highlight group after calling the `setup` function:
 ```lua
 require("ft-highlight").setup()
 
-vim.api.nvim_set_hl(0, "FTHighlightFirst", { link = "Normal", underline = true, bold = true  })
+vim.api.nvim_set_hl(0, "FTHighlightFirst", { link = "Normal", underline = true })
 ```
 
 ## Exported functions
