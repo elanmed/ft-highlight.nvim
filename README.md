@@ -11,7 +11,7 @@ In the example above:
 - 4+ jumps is grey
 
 Colors are based on existing highlight groups defined by your colorscheme, see the section
-on [highlight groups](#highlight-groups)
+on [highlight groups](#highlight-groups).
 
 ## Status
  
