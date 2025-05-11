@@ -31,15 +31,11 @@ end
 local function on_key(opts)
   ft_highlight:add_highlight { forward = opts.forward, highlight_pattern = opts.highlight_pattern, }
   local ok, input = pcall(vim.fn.nr2char, vim.fn.getchar())
-
-  if ft_highlight.is_highlighted then
-    ft_highlight:clear_highlight()
-  end
+  ft_highlight:clear_highlight()
 
   if not ok then
     return opts.key
   end
-
   return opts.key .. input
 end
 

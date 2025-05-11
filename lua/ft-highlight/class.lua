@@ -5,7 +5,6 @@ function FTHighlight:new()
   local ns_id = vim.api.nvim_create_namespace "FTHighlight"
 
   local this = {
-    is_highlighted = false,
     highlighted_line = nil,
     ns_id = ns_id,
   }
@@ -14,12 +13,10 @@ end
 
 --- @param opts { highlighted_line: number }
 function FTHighlight:toggle_on(opts)
-  self.is_highlighted = true
   self.highlighted_line = opts.highlighted_line
 end
 
 function FTHighlight:toggle_off()
-  self.is_highlighted = false
   self.highlighted_line = nil
 end
 
