@@ -40,10 +40,7 @@ local function on_key(opts)
 end
 
 --- @param hl_name string
-local function get_hl_fg(hl_name)
-  local hl = vim.api.nvim_get_hl(0, { name = hl_name, })
-  return hl.fg
-end
+local function get_hl_fg(hl_name) return vim.api.nvim_get_hl(0, { name = hl_name, }).fg end
 
 --- @class FTHighlightOpts
 --- @field default_keymaps boolean Set keymaps for `f`, `F`, `t`, and `T`. Defaults to `true`
