@@ -13,14 +13,6 @@ In the example above:
 Colors are based on existing highlight groups defined by your colorscheme, see the section
 on [highlight groups](#highlight-groups).
 
-## Status
- 
-A WIP, tested but may have some bugs.
-
-TODO:
-- [x] Add vim docs
-- [ ] Run tests on side branches
-
 ## Setup
 
 ```lua
