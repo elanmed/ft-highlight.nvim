@@ -1,22 +1,8 @@
 local FTHighlight = require "ft-highlight.class"
 local ft_highlight = FTHighlight:new()
 
---- @generic T
---- @param val T | nil
---- @param default_val T
---- @return T
-local function default(val, default_val)
-  if val == nil then
-    return default_val
-  end
-  return val
-end
-
 local M = {}
 
---- @class AddHighlightOpts
---- @field forward boolean The direction in which to count the char occurrences
---- @field highlight_pattern string A string pattern to determine if a character should be highlighted according to its occurrence. See FTHighlightOpts.highlight_pattern
 --- @param opts AddHighlightOpts
 M.add_highlight = function(opts)
   ft_highlight:add_highlight(opts)
@@ -45,10 +31,12 @@ local function get_hl_fg(hl_name) return vim.api.nvim_get_hl(0, { name = hl_name
 --- @class FTHighlightOpts
 --- @field default_keymaps boolean Set keymaps for `f`, `F`, `t`, and `T`. Defaults to `true`
 --- @field highlight_pattern string A string pattern to determine if a character should be highlighted according to its occurrence. The pattern is passed to `string.match(str, pattern)` with the current character as `str` and the `highlight_pattern` opt as `pattern`. If `string.match` returns `true`, the character is highlighted as `FTHighlight{First,Second,Third}`, otherwise as `FTHighlightDimmed`. Defaults to `"."` (matches every character).
+
 --- @param opts FTHighlightOpts | nil
 M.setup = function(opts)
-  opts = default(opts, {})
-  local default_keymaps = default(opts.default_keymaps, true)
+  local helpers = require "ft-highlight.helpers"
+  opts = helpers.default(opts, {})
+  local default_keymaps = helpers.default(opts.default_keymaps, true)
 
   vim.api.nvim_set_hl(0, "FTHighlightFirst", { fg = get_hl_fg "Normal", })
   vim.api.nvim_set_hl(0, "FTHighlightSecond", { fg = get_hl_fg "DiagnosticWarn", bold = true, })

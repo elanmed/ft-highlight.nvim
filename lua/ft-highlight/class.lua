@@ -1,3 +1,5 @@
+local helpers = require "ft-highlight.helpers"
+
 local FTHighlight = {}
 FTHighlight.__index = FTHighlight
 
@@ -20,14 +22,18 @@ function FTHighlight:toggle_off()
   self.highlighted_line = nil
 end
 
---- @param opts { str: string, highlight_pattern: string }
+--- @class GetCharOccurrenceAtPositionOpts
+--- @field str string
+--- @field highlight_pattern string
+
+--- @param opts GetCharOccurrenceAtPositionOpts
 function FTHighlight:get_char_occurrence_at_position(opts)
   -- bee -> { "b" = 1, "e" = 2 }
   local char_to_num_occurrence = {}
   -- bee -> { 1 = 1, 2 = 1, 3 = 2 }
   local char_occurrence_at_position = {}
 
-  local pattern = opts.highlight_pattern or "."
+  local pattern = helpers.default(opts.highlight_pattern, ".")
 
   for index = 1, #opts.str do
     local char = opts.str:sub(index, index)
@@ -49,7 +55,11 @@ function FTHighlight:get_char_occurrence_at_position(opts)
   return char_occurrence_at_position
 end
 
---- @param opts { forward: boolean, highlight_pattern: string }
+--- @class AddHighlightOpts
+--- @field forward boolean The direction in which to count the char occurrences
+--- @field highlight_pattern string A string pattern to determine if a character should be highlighted according to its occurrence. See FTHighlightOpts.highlight_pattern
+
+--- @param opts AddHighlightOpts
 function FTHighlight:add_highlight(opts)
   local curr_line = vim.api.nvim_get_current_line()
   local cursor_pos = vim.api.nvim_win_get_cursor(0)
