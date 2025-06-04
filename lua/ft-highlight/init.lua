@@ -13,7 +13,10 @@ M.clear_highlight = function()
   ft_highlight:clear_highlight()
 end
 
---- @param opts { key: "f"|"F"|"t"|"T", forward: boolean, highlight_pattern: string }
+--- @class OnKeyOpts : AddHighlightOpts
+--- @field key "f" | "F" | "t" | "T"
+
+--- @param opts OnKeyOpts
 local function on_key(opts)
   ft_highlight:add_highlight { forward = opts.forward, highlight_pattern = opts.highlight_pattern, }
   local ok, input = pcall(vim.fn.getcharstr)
