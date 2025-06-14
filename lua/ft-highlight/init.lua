@@ -1,10 +1,33 @@
 local FTHighlight = require "ft-highlight.class"
 local ft_highlight = FTHighlight:new()
+local validate = require "ft-highlight.validator".validate
 
 local M = {}
 
 --- @param opts AddHighlightOpts
 M.add_highlight = function(opts)
+  --- @type Schema
+  local opts_schema = {
+    type = "table",
+    exact = true,
+    entries = {
+      forward = { type = "boolean", },
+      highlight_pattern = { type = "string", optional = true, },
+    },
+  }
+
+  if not validate(opts_schema, opts) then
+    vim.notify(
+      string.format(
+        "Malformed opts! Expected %s, received %s",
+        vim.inspect(opts_schema),
+        vim.inspect(opts)
+      ),
+      vim.log.levels.ERROR
+    )
+    return
+  end
+
   ft_highlight:add_highlight(opts)
 end
 
@@ -37,6 +60,29 @@ local function get_hl_fg(hl_name) return vim.api.nvim_get_hl(0, { name = hl_name
 
 --- @param opts FTHighlightOpts | nil
 M.setup = function(opts)
+  --- @type Schema
+  local opts_schema = {
+    type = "table",
+    exact = true,
+    entries = {
+      default_keymaps = { type = "boolean", optional = true, },
+      highlight_pattern = { type = "string", optional = true, },
+    },
+    optional = true,
+  }
+
+  if not validate(opts_schema, opts) then
+    vim.notify(
+      string.format(
+        "Malformed opts! Expected %s, received %s",
+        vim.inspect(opts_schema),
+        vim.inspect(opts)
+      ),
+      vim.log.levels.ERROR
+    )
+    return
+  end
+
   local helpers = require "ft-highlight.helpers"
   opts = helpers.default(opts, {})
   local default_keymaps = helpers.default(opts.default_keymaps, true)
