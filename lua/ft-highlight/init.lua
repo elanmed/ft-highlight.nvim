@@ -19,7 +19,7 @@ M.add_highlight = function(opts)
   if not validate(opts_schema, opts) then
     vim.notify(
       string.format(
-        "Malformed opts! Expected %s, received %s",
+        "Malformed opts passed to ft-highlight.add_highlight! Expected %s, received %s",
         vim.inspect(opts_schema),
         vim.inspect(opts)
       ),
@@ -74,7 +74,7 @@ M.setup = function(opts)
   if not validate(opts_schema, opts) then
     vim.notify(
       string.format(
-        "Malformed opts! Expected %s, received %s",
+        "Malformed opts passed to ft-highlight.setup! Expected %s, received %s",
         vim.inspect(opts_schema),
         vim.inspect(opts)
       ),
