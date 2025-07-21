@@ -1,11 +1,11 @@
 local FTHighlight = require "ft-highlight.class"
 local ft_highlight = FTHighlight:new()
-local validate = require "ft-highlight.validator".validate
 
 local M = {}
 
 --- @param opts AddHighlightOpts
 M.add_highlight = function(opts)
+  local validate = require "ft-highlight.validator".validate
   --- @type Schema
   local opts_schema = {
     type = "table",
@@ -60,6 +60,7 @@ local function get_hl_fg(hl_name) return vim.api.nvim_get_hl(0, { name = hl_name
 
 --- @param opts FTHighlightOpts | nil
 M.setup = function(opts)
+  local validate = require "ft-highlight.validator".validate
   --- @type Schema
   local opts_schema = {
     type = "table",
@@ -83,9 +84,9 @@ M.setup = function(opts)
     return
   end
 
-  local helpers = require "ft-highlight.helpers"
-  opts = helpers.default(opts, {})
-  local default_keymaps = helpers.default(opts.default_keymaps, true)
+  local h = require "ft-highlight.helpers"
+  opts = h.default(opts, {})
+  local default_keymaps = h.default(opts.default_keymaps, true)
 
   vim.api.nvim_set_hl(0, "FTHighlightFirst", { fg = get_hl_fg "Normal", })
   vim.api.nvim_set_hl(0, "FTHighlightSecond", { fg = get_hl_fg "DiagnosticWarn", bold = true, })

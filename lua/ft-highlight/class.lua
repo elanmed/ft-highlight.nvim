@@ -1,5 +1,3 @@
-local helpers = require "ft-highlight.helpers"
-
 local FTHighlight = {}
 FTHighlight.__index = FTHighlight
 
@@ -33,7 +31,8 @@ function FTHighlight:get_char_occurrence_at_position(opts)
   -- bee -> { 1 = 1, 2 = 1, 3 = 2 }
   local char_occurrence_at_position = {}
 
-  local pattern = helpers.default(opts.highlight_pattern, ".")
+  local h = require "ft-highlight.helpers"
+  local pattern = h.default(opts.highlight_pattern, ".")
 
   for index = 1, #opts.str do
     local char = opts.str:sub(index, index)
