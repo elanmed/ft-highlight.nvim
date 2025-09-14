@@ -2,7 +2,11 @@
 quote_style = double
 trailing_table_separator = always
 call_arg_parentheses = remove
-align_array_table = false
-align_chain_expr = false
-end_statement_with_semicolon = same_line
 space_after_comment_dash = true
+align_function_params = false
+align_continuous_assign_statement = false
+align_continuous_rect_table_field = false
+align_array_table = false
+align_continuous_inline_comment = false
+align_chain_expr = false
+end_statement_with_semicolon = never
