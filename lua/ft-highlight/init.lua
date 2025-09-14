@@ -5,7 +5,7 @@ local M = {}
 
 --- @param opts AddHighlightOpts
 M.add_highlight = function(opts)
-  local validate = require "ft-highlight.validator".validate
+  local notify_assert = require "ft-highlight.validator".notify_assert
   --- @type Schema
   local opts_schema = {
     type = "table",
@@ -16,15 +16,7 @@ M.add_highlight = function(opts)
     },
   }
 
-  if not validate(opts_schema, opts) then
-    vim.notify(
-      string.format(
-        "Malformed opts passed to ft-highlight.add_highlight! Expected %s, received %s",
-        vim.inspect(opts_schema),
-        vim.inspect(opts)
-      ),
-      vim.log.levels.ERROR
-    )
+  if not notify_assert { schema = opts_schema, val = opts, name = "[ft-highlight.nvim] add_highlight.opts", } then
     return
   end
 
@@ -60,7 +52,7 @@ local function get_hl_fg(hl_name) return vim.api.nvim_get_hl(0, { name = hl_name
 
 --- @param opts FTHighlightOpts | nil
 M.setup = function(opts)
-  local validate = require "ft-highlight.validator".validate
+  local notify_assert = require "ft-highlight.validator".notify_assert
   --- @type Schema
   local opts_schema = {
     type = "table",
@@ -72,15 +64,7 @@ M.setup = function(opts)
     optional = true,
   }
 
-  if not validate(opts_schema, opts) then
-    vim.notify(
-      string.format(
-        "Malformed opts passed to ft-highlight.setup! Expected %s, received %s",
-        vim.inspect(opts_schema),
-        vim.inspect(opts)
-      ),
-      vim.log.levels.ERROR
-    )
+  if not notify_assert { schema = opts_schema, val = opts, name = "[ft-highlight.nvim] setup.opts", } then
     return
   end
 
