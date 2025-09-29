@@ -1,6 +1,13 @@
 local FTHighlight = {}
 FTHighlight.__index = FTHighlight
 
+local default = function(val, default_val)
+  if val == nil then
+    return default_val
+  end
+  return val
+end
+
 function FTHighlight:new()
   local ns_id = vim.api.nvim_create_namespace "FTHighlight"
 
@@ -20,22 +27,18 @@ function FTHighlight:toggle_off()
   self.highlighted_line = nil
 end
 
---- @class GetCharOccurrenceAtPositionOpts
---- @field str string
---- @field highlight_pattern string
-
---- @param opts GetCharOccurrenceAtPositionOpts
-function FTHighlight:get_char_occurrence_at_position(opts)
+--- @param str string
+function FTHighlight:get_char_occurrence_at_position(str)
   -- bee -> { "b" = 1, "e" = 2 }
   local char_to_num_occurrence = {}
   -- bee -> { 1 = 1, 2 = 1, 3 = 2 }
   local char_occurrence_at_position = {}
 
-  local h = require "ft-highlight.helpers"
-  local pattern = h.default(opts.highlight_pattern, ".")
+  local opts = default(vim.g.ft_highlight, {})
+  local pattern = default(opts.highlight_pattern, ".")
 
-  for index = 1, #opts.str do
-    local char = opts.str:sub(index, index)
+  for index = 1, #str do
+    local char = str:sub(index, index)
     if not char:match(pattern) then
       char_occurrence_at_position[index] = -1
       goto continue
@@ -56,7 +59,6 @@ end
 
 --- @class AddHighlightOpts
 --- @field forward boolean The direction in which to count the char occurrences
---- @field highlight_pattern string A string pattern to determine if a character should be highlighted according to its occurrence. See FTHighlightOpts.highlight_pattern
 
 --- @param opts AddHighlightOpts
 function FTHighlight:add_highlight(opts)
@@ -75,17 +77,14 @@ function FTHighlight:add_highlight(opts)
     local forward_start = col_1_indexed + 1
     local forward_subbed = curr_line:sub(forward_start)
 
-    orders = self:get_char_occurrence_at_position { str = forward_subbed, highlight_pattern = opts.highlight_pattern, }
+    orders = self:get_char_occurrence_at_position(forward_subbed)
   else
     -- highlight starting with the char before the cursor
     local backward_start = col_1_indexed - 1
     local backward_subbed = curr_line:sub(1, backward_start) -- inclusive!
     local backward_subbed_reversed = backward_subbed:reverse()
 
-    orders = self:get_char_occurrence_at_position {
-      str = backward_subbed_reversed,
-      highlight_pattern = opts.highlight_pattern,
-    }
+    orders = self:get_char_occurrence_at_position(backward_subbed_reversed)
   end
 
   for offset, value in pairs(orders) do

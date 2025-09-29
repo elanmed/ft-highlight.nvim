@@ -13,13 +13,13 @@ In the example above:
 Colors are based on existing highlight groups defined by your colorscheme, see the section
 on [highlight groups](#highlight-groups).
 
-## Setup
+`ft-highlight` is autoloaded but most code is deferred until the first `f`/`F`/`t`/`T` key
+
+## Configuration
 
 ```lua
-require("ft-highlight").setup({
-  -- Set keymaps for `f`, `F`, `t`, and `T`. Defaults to `true`
-  default_keymaps = true, 
-
+-- defaults to:
+vim.g.ft_highlight = {
   -- A string pattern to determine if a character should be highlighted according to its 
   -- occurrence. The pattern is passed to `string.match(str, pattern)` with the current 
   -- character as `str` and the `highlight_pattern` opt as `pattern`. If `string.match` 
@@ -28,7 +28,7 @@ require("ft-highlight").setup({
   -- as `FTHighlightDimmed`. 
   -- Defaults to `"."` (matches every character).
   highlight_pattern = "."
-})
+}
 ```
 
 ## Highlight Groups
@@ -43,32 +43,3 @@ vim.api.nvim_set_hl(0, "FTHighlightSecond", { fg = get_hl_fg "DiagnosticWarn", b
 vim.api.nvim_set_hl(0, "FTHighlightThird", { fg = get_hl_fg "DiagnosticError", bold = true, })
 vim.api.nvim_set_hl(0, "FTHighlightDimmed", { fg = get_hl_fg "Comment", })
 ```
-
-To override, update the highlight group after calling the `setup` function:
-
-```lua
-require("ft-highlight").setup()
-
-local fg = vim.api.nvim_get_hl(0, { name = "Normal", }).fg
-vim.api.nvim_set_hl(0, "FTHighlightFirst", { fg = fg, underline = true })
-```
-
-## Exported functions
-
-### `add_highlight`
-
-Accepts an `opts` argument of the following type:
-
-```lua
---- @class AddHighlightOpts
---- @field forward boolean The direction in which to highlight the char occurrences
---- @field highlight_pattern string (See highlight_pattern in `setup`)
-```
-
-Returns no value.
-
-### `clear_highlight`
-
-A function that clears the currently highlighted line.
-
-Accepts no arguments, returns no value.
