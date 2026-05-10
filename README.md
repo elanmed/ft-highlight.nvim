@@ -5,6 +5,7 @@ Add highlights to a `{f,F,t,T}` movement to visualize the number of jumps to a g
 ![demo](https://elanmed.dev/nvim-plugins/ft-highlight.png)
 
 In the example above:
+
 - 1 jump is white
 - 2 jumps is yellow
 - 3 jumps is red
@@ -13,21 +14,34 @@ In the example above:
 Colors are based on existing highlight groups defined by your colorscheme, see the section
 on [highlight groups](#highlight-groups).
 
-`ft-highlight` is autoloaded but most code is deferred until the first `f`/`F`/`t`/`T` key
+`ft-highlight` is autoloaded but most code is deferred until the first
+invocation of a `<Plug>FtHighlight_*` mapping.
+
+## Mappings
+
+`ft-highlight` does not create any keymaps by default. It provides `<Plug>`
+mappings that you can map to your preferred keys:
+
+```lua
+vim.keymap.set({ "n", "v", "o" }, "f", "<Plug>FtHighlight_f", { remap = true })
+vim.keymap.set({ "n", "v", "o" }, "F", "<Plug>FtHighlight_F", { remap = true })
+vim.keymap.set({ "n", "v", "o" }, "t", "<Plug>FtHighlight_t", { remap = true })
+vim.keymap.set({ "n", "v", "o" }, "T", "<Plug>FtHighlight_T", { remap = true })
+```
 
 ## Configuration
 
 ```lua
 -- defaults to:
 vim.g.ft_highlight = {
-  -- A string pattern to determine if a character should be highlighted according to its 
-  -- occurrence. The pattern is passed to `string.match(str, pattern)` with the current 
-  -- character as `str` and the `highlight_pattern` opt as `pattern`. If `string.match` 
-  -- returns a match, the character is highlighted as `FTHighlight{First,Second,Third}`, 
-  -- otherwise as `FTHighlightDimmed`. Occurrences beyond the third are also highlighted 
-  -- as `FTHighlightDimmed`. 
+  -- A string pattern to determine if a character should be highlighted according to its
+  -- occurrence. The pattern is passed to `string.match(str, pattern)` with the current
+  -- character as `str` and the `highlight_pattern` opt as `pattern`. If `string.match`
+  -- returns a match, the character is highlighted as `FTHighlight{First,Second,Third}`,
+  -- otherwise as `FTHighlightDimmed`. Occurrences beyond the third are also highlighted
+  -- as `FTHighlightDimmed`.
   -- Defaults to `"."` (matches every character).
-  highlight_pattern = "."
+  highlight_pattern = ".",
 }
 ```
 

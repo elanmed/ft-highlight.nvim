@@ -8,6 +8,12 @@ local T = new_set {
     pre_case = function()
       child.restart { "-u", "scripts/minimal_init.lua", }
       child.api.nvim_buf_set_lines(0, 0, -1, true, { " Ava ate an apple. ", })
+      child.lua [[
+        vim.keymap.set({ "n", "v", "o" }, "f", "<Plug>FtHighlight_f", { remap = true })
+        vim.keymap.set({ "n", "v", "o" }, "F", "<Plug>FtHighlight_F", { remap = true })
+        vim.keymap.set({ "n", "v", "o" }, "t", "<Plug>FtHighlight_t", { remap = true })
+        vim.keymap.set({ "n", "v", "o" }, "T", "<Plug>FtHighlight_T", { remap = true })
+      ]]
     end,
     post_once = child.stop,
   },
@@ -172,6 +178,127 @@ T["keypress"]["F"]["highlights correctly from the first char"] = function()
   local ns_id = child.api.nvim_create_namespace "FTHighlight"
   eq(get_hl_names(ns_id), {})
   child.type_keys "F"
+  eq(get_hl_names(ns_id), {})
+  child.type_keys "<esc>"
+  eq(get_hl_names(ns_id), {})
+end
+
+T["keypress"]["t"] = new_set()
+T["keypress"]["t"]["highlights correctly from the first char"] = function()
+  local ns_id = child.api.nvim_create_namespace "FTHighlight"
+  eq(get_hl_names(ns_id), {})
+  child.type_keys "t"
+  eq(get_hl_names(ns_id), {
+    "FTHighlightFirst", -- A
+    "FTHighlightFirst", -- v
+    "FTHighlightFirst", -- a
+    "FTHighlightFirst", --
+    "FTHighlightSecond", -- a
+    "FTHighlightFirst", -- t
+    "FTHighlightFirst", -- e
+    "FTHighlightSecond", --
+    "FTHighlightThird", -- a
+    "FTHighlightFirst", -- n
+    "FTHighlightThird", --
+    "FTHighlightDimmed", -- a
+    "FTHighlightFirst", -- p
+    "FTHighlightSecond", -- p
+    "FTHighlightFirst", -- l
+    "FTHighlightSecond", -- e
+    "FTHighlightFirst", -- .
+    "FTHighlightDimmed", --
+  })
+  child.type_keys "A"
+  eq(get_hl_names(ns_id), {})
+end
+T["keypress"]["t"]["highlights correctly from a middle first char"] = function()
+  child.type_keys "4l"
+  local ns_id = child.api.nvim_create_namespace "FTHighlight"
+  eq(get_hl_names(ns_id), {})
+  child.type_keys "t"
+  eq(get_hl_names(ns_id), {
+    "FTHighlightFirst", -- a
+    "FTHighlightFirst", -- t
+    "FTHighlightFirst", -- e
+    "FTHighlightFirst", --
+    "FTHighlightSecond", -- a
+    "FTHighlightFirst", -- n
+    "FTHighlightSecond", --
+    "FTHighlightThird", -- a
+    "FTHighlightFirst", -- p
+    "FTHighlightSecond", -- p
+    "FTHighlightFirst", -- l
+    "FTHighlightSecond", -- e
+    "FTHighlightFirst", -- .
+    "FTHighlightThird", --
+  })
+  child.type_keys "a"
+  eq(get_hl_names(ns_id), {})
+end
+T["keypress"]["t"]["highlights correctly from the last char"] = function()
+  child.type_keys "$"
+  local ns_id = child.api.nvim_create_namespace "FTHighlight"
+  eq(get_hl_names(ns_id), {})
+  child.type_keys "t"
+  eq(get_hl_names(ns_id), {})
+  child.type_keys "<esc>"
+  eq(get_hl_names(ns_id), {})
+end
+
+T["keypress"]["T"] = new_set()
+T["keypress"]["T"]["highlights correctly from the last char"] = function()
+  child.type_keys "$"
+  local ns_id = child.api.nvim_create_namespace "FTHighlight"
+  eq(get_hl_names(ns_id), {})
+  child.type_keys "T"
+  eq(get_hl_names(ns_id), {
+    "FTHighlightDimmed", --
+    "FTHighlightFirst", -- A
+    "FTHighlightFirst", -- v
+    "FTHighlightDimmed", -- a
+    "FTHighlightThird", --
+    "FTHighlightThird", -- a
+    "FTHighlightFirst", -- t
+    "FTHighlightSecond", -- e
+    "FTHighlightSecond", --
+    "FTHighlightSecond", -- a
+    "FTHighlightFirst", -- n
+    "FTHighlightFirst", --
+    "FTHighlightFirst", -- a
+    "FTHighlightSecond", -- p
+    "FTHighlightFirst", -- p
+    "FTHighlightFirst", -- l
+    "FTHighlightFirst", -- e
+    "FTHighlightFirst", -- .
+  })
+  child.type_keys "."
+  eq(get_hl_names(ns_id), {})
+end
+T["keypress"]["T"]["highlights correctly from a middle char"] = function()
+  child.type_keys "$7h"
+  local ns_id = child.api.nvim_create_namespace "FTHighlight"
+  eq(get_hl_names(ns_id), {})
+  child.type_keys "T"
+  eq(get_hl_names(ns_id), {
+    "FTHighlightThird", --
+    "FTHighlightFirst", -- A
+    "FTHighlightFirst", -- v
+    "FTHighlightThird", -- a
+    "FTHighlightSecond", --
+    "FTHighlightSecond", -- a
+    "FTHighlightFirst", -- t
+    "FTHighlightFirst", -- e
+    "FTHighlightFirst", --
+    "FTHighlightFirst", -- a
+    "FTHighlightFirst", -- n
+  })
+  child.type_keys "."
+  eq(get_hl_names(ns_id), {})
+end
+T["keypress"]["T"]["highlights correctly from the first char"] = function()
+  local ns_id = child.api.nvim_create_namespace "FTHighlight"
+  eq(get_hl_names(ns_id), {})
+  child.type_keys "T"
   eq(get_hl_names(ns_id), {})
   child.type_keys "<esc>"
   eq(get_hl_names(ns_id), {})

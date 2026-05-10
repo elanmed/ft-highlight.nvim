@@ -32,25 +32,25 @@ local function on_key(opts)
   return opts.key .. input
 end
 
-vim.keymap.set({ "n", "v", "o", }, "f",
+vim.keymap.set({ "n", "v", "o", }, "<Plug>FtHighlight_f",
   function()
     return on_key { key = "f", forward = true, }
   end,
   { expr = true, }
 )
-vim.keymap.set({ "n", "v", "o", }, "F",
+vim.keymap.set({ "n", "v", "o", }, "<Plug>FtHighlight_F",
   function()
     return on_key { key = "F", forward = false, }
   end,
   { expr = true, }
 )
-vim.keymap.set({ "n", "v", "o", }, "t",
+vim.keymap.set({ "n", "v", "o", }, "<Plug>FtHighlight_t",
   function()
     return on_key { key = "t", forward = true, }
   end,
   { expr = true, }
 )
-vim.keymap.set({ "n", "v", "o", }, "T",
+vim.keymap.set({ "n", "v", "o", }, "<Plug>FtHighlight_T",
   function()
     return on_key { key = "T", forward = false, }
   end,

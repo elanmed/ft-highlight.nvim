@@ -52,7 +52,7 @@ T["#get_char_occurrence_at_position"]["should handle numbers, special characters
   eq(actual, expected)
 end
 
-T["#get_char_occurrence_at_position"]["should handle numbers, special characters"] = function()
+T["#get_char_occurrence_at_position"]["should handle empty string"] = function()
   local actual = ft_highlight:get_char_occurrence_at_position ""
   local expected = {}
   eq(actual, expected)
