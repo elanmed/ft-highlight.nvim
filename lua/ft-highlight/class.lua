@@ -112,12 +112,12 @@ function FTHighlight:add_highlight(opts)
       0,
       self.ns_id,
       hl_group,
-      { row_0_indexed, highlight_col_0_indexed, },
-      { row_0_indexed, highlight_col_0_indexed + 1, }
+      { row_0_indexed, highlight_col_0_indexed },
+      { row_0_indexed, highlight_col_0_indexed + 1 }
     )
   end
 
-  self:toggle_on { highlighted_line = row_0_indexed, }
+  self:toggle_on { highlighted_line = row_0_indexed }
   vim.cmd "redraw"
 end
 

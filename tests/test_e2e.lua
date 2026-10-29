@@ -6,8 +6,8 @@ local child = MiniTest.new_child_neovim()
 local T = new_set {
   hooks = {
     pre_case = function()
-      child.restart { "-u", "scripts/minimal_init.lua", }
-      child.api.nvim_buf_set_lines(0, 0, -1, true, { " Ava ate an apple. ", })
+      child.restart { "-u", "scripts/minimal_init.lua" }
+      child.api.nvim_buf_set_lines(0, 0, -1, true, { " Ava ate an apple. " })
       child.lua [[
         vim.keymap.set({ "n", "v", "o" }, "f", "<Plug>FtHighlight_f", { remap = true })
         vim.keymap.set({ "n", "v", "o" }, "F", "<Plug>FtHighlight_F", { remap = true })
@@ -21,18 +21,20 @@ local T = new_set {
 
 --- @param ns_id number
 local function get_marks(ns_id)
-  return child.api.nvim_buf_get_extmarks(0, ns_id, 0, -1, { details = true, })
+  return child.api.nvim_buf_get_extmarks(0, ns_id, 0, -1, { details = true })
 end
 
 --- @param ns_id number
 local function get_hl_names(ns_id)
   local marks = get_marks(ns_id)
-  return vim.tbl_map(function(mark) return mark[4].hl_group end, marks)
+  return vim.tbl_map(function(mark)
+    return mark[4].hl_group
+  end, marks)
 end
 
 T["configuration"] = new_set()
 T["configuration"]["highlight_pattern"] = function()
-  child.g.ft_highlight = { highlight_pattern = "[a-z]", }
+  child.g.ft_highlight = { highlight_pattern = "[a-z]" }
 
   local ns_id = child.api.nvim_create_namespace "FTHighlight"
   eq(get_hl_names(ns_id), {})

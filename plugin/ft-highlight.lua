@@ -1,16 +1,20 @@
 local singleton
 
 local maybe_initialize = function()
-  if vim.g.ft_highlight_initialized then return end
+  if vim.g.ft_highlight_initialized then
+    return
+  end
   vim.g.ft_highlight_initialized = true
 
   --- @param hl_name string
-  local function get_hl_fg(hl_name) return vim.api.nvim_get_hl(0, { name = hl_name, }).fg end
+  local function get_hl_fg(hl_name)
+    return vim.api.nvim_get_hl(0, { name = hl_name }).fg
+  end
 
-  vim.api.nvim_set_hl(0, "FTHighlightFirst", { fg = get_hl_fg "Normal", })
-  vim.api.nvim_set_hl(0, "FTHighlightSecond", { fg = get_hl_fg "DiagnosticWarn", bold = true, })
-  vim.api.nvim_set_hl(0, "FTHighlightThird", { fg = get_hl_fg "DiagnosticError", bold = true, })
-  vim.api.nvim_set_hl(0, "FTHighlightDimmed", { fg = get_hl_fg "Comment", })
+  vim.api.nvim_set_hl(0, "FTHighlightFirst", { fg = get_hl_fg "Normal" })
+  vim.api.nvim_set_hl(0, "FTHighlightSecond", { fg = get_hl_fg "DiagnosticWarn", bold = true })
+  vim.api.nvim_set_hl(0, "FTHighlightThird", { fg = get_hl_fg "DiagnosticError", bold = true })
+  vim.api.nvim_set_hl(0, "FTHighlightDimmed", { fg = get_hl_fg "Comment" })
 
   local FTHighlight = require "ft-highlight.class"
   singleton = FTHighlight:new()
@@ -22,7 +26,7 @@ end
 local function on_key(opts)
   maybe_initialize()
 
-  singleton:add_highlight { forward = opts.forward, }
+  singleton:add_highlight { forward = opts.forward }
   local ok, input = pcall(vim.fn.getcharstr)
   singleton:clear_highlight()
 
@@ -32,27 +36,15 @@ local function on_key(opts)
   return opts.key .. input
 end
 
-vim.keymap.set({ "n", "v", "o", }, "<Plug>FtHighlight_f",
-  function()
-    return on_key { key = "f", forward = true, }
-  end,
-  { expr = true, }
-)
-vim.keymap.set({ "n", "v", "o", }, "<Plug>FtHighlight_F",
-  function()
-    return on_key { key = "F", forward = false, }
-  end,
-  { expr = true, }
-)
-vim.keymap.set({ "n", "v", "o", }, "<Plug>FtHighlight_t",
-  function()
-    return on_key { key = "t", forward = true, }
-  end,
-  { expr = true, }
-)
-vim.keymap.set({ "n", "v", "o", }, "<Plug>FtHighlight_T",
-  function()
-    return on_key { key = "T", forward = false, }
-  end,
-  { expr = true, }
-)
+vim.keymap.set({ "n", "v", "o" }, "<Plug>FtHighlight_f", function()
+  return on_key { key = "f", forward = true }
+end, { expr = true })
+vim.keymap.set({ "n", "v", "o" }, "<Plug>FtHighlight_F", function()
+  return on_key { key = "F", forward = false }
+end, { expr = true })
+vim.keymap.set({ "n", "v", "o" }, "<Plug>FtHighlight_t", function()
+  return on_key { key = "t", forward = true }
+end, { expr = true })
+vim.keymap.set({ "n", "v", "o" }, "<Plug>FtHighlight_T", function()
+  return on_key { key = "T", forward = false }
+end, { expr = true })
