@@ -370,4 +370,103 @@ T["mapped motions"]["empty lines produce no highlights and do not move"] = funct
   eq(get_marks(ns_id), {})
 end
 
+T["mapped motions"]["F moves to the previous typed character"] = function()
+  set_line "abca"
+  child.api.nvim_win_set_cursor(0, { 1, 3 })
+  local ns_id = child.api.nvim_create_namespace "FTHighlight"
+
+  child.type_keys "F"
+  child.type_keys "b"
+
+  eq(child.api.nvim_win_get_cursor(0), { 1, 1 })
+  eq(get_marks(ns_id), {})
+end
+
+T["mapped motions"]["t moves before the typed character"] = function()
+  set_line "abca"
+  child.api.nvim_win_set_cursor(0, { 1, 0 })
+  local ns_id = child.api.nvim_create_namespace "FTHighlight"
+
+  child.type_keys "t"
+  child.type_keys "c"
+
+  eq(child.api.nvim_win_get_cursor(0), { 1, 1 })
+  eq(get_marks(ns_id), {})
+end
+
+T["mapped motions"]["T moves after the previous typed character"] = function()
+  set_line "abca"
+  child.api.nvim_win_set_cursor(0, { 1, 3 })
+  local ns_id = child.api.nvim_create_namespace "FTHighlight"
+
+  child.type_keys "T"
+  child.type_keys "b"
+
+  eq(child.api.nvim_win_get_cursor(0), { 1, 2 })
+  eq(get_marks(ns_id), {})
+end
+
+T["mapped motions"]["F preserves visual mode and selects to the previous character"] = function()
+  set_line "abca"
+  child.api.nvim_win_set_cursor(0, { 1, 3 })
+  child.type_keys "v"
+  child.type_keys "F"
+  child.type_keys "b"
+
+  eq(child.api.nvim_win_get_cursor(0), { 1, 1 })
+  eq(child.fn.mode(), "v")
+end
+
+T["mapped motions"]["t preserves visual mode and selects before the character"] = function()
+  set_line "abca"
+  child.api.nvim_win_set_cursor(0, { 1, 0 })
+  child.type_keys "v"
+  child.type_keys "t"
+  child.type_keys "c"
+
+  eq(child.api.nvim_win_get_cursor(0), { 1, 1 })
+  eq(child.fn.mode(), "v")
+end
+
+T["mapped motions"]["T preserves visual mode and selects after the previous character"] = function()
+  set_line "abca"
+  child.api.nvim_win_set_cursor(0, { 1, 3 })
+  child.type_keys "v"
+  child.type_keys "T"
+  child.type_keys "b"
+
+  eq(child.api.nvim_win_get_cursor(0), { 1, 2 })
+  eq(child.fn.mode(), "v")
+end
+
+T["mapped motions"]["F works as an operator-pending motion"] = function()
+  set_line "abca"
+  child.api.nvim_win_set_cursor(0, { 1, 3 })
+  child.type_keys "d"
+  child.type_keys "F"
+  child.type_keys "b"
+
+  eq(child.api.nvim_buf_get_lines(0, 0, -1, true), { "aa" })
+end
+
+T["mapped motions"]["t works as an operator-pending motion"] = function()
+  set_line "abca"
+  child.api.nvim_win_set_cursor(0, { 1, 0 })
+  child.type_keys "d"
+  child.type_keys "t"
+  child.type_keys "c"
+
+  eq(child.api.nvim_buf_get_lines(0, 0, -1, true), { "ca" })
+end
+
+T["mapped motions"]["T works as an operator-pending motion"] = function()
+  set_line "abca"
+  child.api.nvim_win_set_cursor(0, { 1, 3 })
+  child.type_keys "d"
+  child.type_keys "T"
+  child.type_keys "b"
+
+  eq(child.api.nvim_buf_get_lines(0, 0, -1, true), { "aba" })
+end
+
 return T
