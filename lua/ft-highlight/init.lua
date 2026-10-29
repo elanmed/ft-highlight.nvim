@@ -1,41 +1,29 @@
-local FTHighlight = {}
-FTHighlight.__index = FTHighlight
+local M = {}
 
-local default = function(val, default_val)
+local ns_id = vim.api.nvim_create_namespace "FTHighlight"
+local highlighted_line = nil
+local initialized = false
+
+--- @generic T
+--- @param val T | nil
+--- @param default_val T
+--- @return T
+local nonnil = function(val, default_val)
   if val == nil then
     return default_val
   end
   return val
 end
 
-function FTHighlight:new()
-  local ns_id = vim.api.nvim_create_namespace "FTHighlight"
-
-  local this = {
-    highlighted_line = nil,
-    ns_id = ns_id,
-  }
-  return setmetatable(this, FTHighlight)
-end
-
---- @param opts { highlighted_line: number }
-function FTHighlight:toggle_on(opts)
-  self.highlighted_line = opts.highlighted_line
-end
-
-function FTHighlight:toggle_off()
-  self.highlighted_line = nil
-end
-
 --- @param str string
-function FTHighlight:get_char_occurrence_at_position(str)
+function M.get_char_occurrence_at_position(str)
   -- bee -> { "b" = 1, "e" = 2 }
   local char_to_num_occurrence = {}
   -- bee -> { 1 = 1, 2 = 1, 3 = 2 }
   local char_occurrence_at_position = {}
 
-  local opts = default(vim.g.ft_highlight, {})
-  local pattern = default(opts.highlight_pattern, ".")
+  local opts = nonnil(vim.g.ft_highlight, {})
+  local pattern = nonnil(opts.highlight_pattern, ".")
 
   for index = 1, #str do
     local char = str:sub(index, index)
@@ -57,11 +45,8 @@ function FTHighlight:get_char_occurrence_at_position(str)
   return char_occurrence_at_position
 end
 
---- @class AddHighlightOpts
---- @field forward boolean The direction in which to count the char occurrences
-
---- @param opts AddHighlightOpts
-function FTHighlight:add_highlight(opts)
+--- @param opts { forward: boolean }
+function M.add_highlight(opts)
   local curr_line = vim.api.nvim_get_current_line()
   local cursor_pos = vim.api.nvim_win_get_cursor(0)
 
@@ -77,14 +62,14 @@ function FTHighlight:add_highlight(opts)
     local forward_start = col_1_indexed + 1
     local forward_subbed = curr_line:sub(forward_start)
 
-    orders = self:get_char_occurrence_at_position(forward_subbed)
+    orders = M.get_char_occurrence_at_position(forward_subbed)
   else
     -- highlight starting with the char before the cursor
     local backward_start = col_1_indexed - 1
     local backward_subbed = curr_line:sub(1, backward_start) -- inclusive!
     local backward_subbed_reversed = backward_subbed:reverse()
 
-    orders = self:get_char_occurrence_at_position(backward_subbed_reversed)
+    orders = M.get_char_occurrence_at_position(backward_subbed_reversed)
   end
 
   for offset, value in pairs(orders) do
@@ -110,23 +95,54 @@ function FTHighlight:add_highlight(opts)
 
     vim.hl.range(
       0,
-      self.ns_id,
+      ns_id,
       hl_group,
       { row_0_indexed, highlight_col_0_indexed },
       { row_0_indexed, highlight_col_0_indexed + 1 }
     )
   end
 
-  self:toggle_on { highlighted_line = row_0_indexed }
+  highlighted_line = row_0_indexed
   vim.cmd "redraw"
 end
 
-function FTHighlight:clear_highlight()
-  if self.highlighted_line == nil then
+function M.clear_highlight()
+  if highlighted_line == nil then
     return
   end
-  vim.api.nvim_buf_clear_namespace(0, self.ns_id, self.highlighted_line, self.highlighted_line + 1)
-  self:toggle_off()
+  vim.api.nvim_buf_clear_namespace(0, ns_id, highlighted_line, highlighted_line + 1)
+  highlighted_line = nil
 end
 
-return FTHighlight
+local function maybe_initialize()
+  if initialized then
+    return
+  end
+  initialized = true
+
+  --- @param hl_name string
+  local function get_hl_fg(hl_name)
+    return vim.api.nvim_get_hl(0, { name = hl_name }).fg
+  end
+
+  vim.api.nvim_set_hl(0, "FTHighlightFirst", { fg = get_hl_fg "Normal" })
+  vim.api.nvim_set_hl(0, "FTHighlightSecond", { fg = get_hl_fg "DiagnosticWarn", bold = true })
+  vim.api.nvim_set_hl(0, "FTHighlightThird", { fg = get_hl_fg "DiagnosticError", bold = true })
+  vim.api.nvim_set_hl(0, "FTHighlightDimmed", { fg = get_hl_fg "Comment" })
+end
+
+--- @param opts { key: "f" | "F" | "t" | "T", forward: boolean }
+function M.on_key(opts)
+  maybe_initialize()
+
+  M.add_highlight { forward = opts.forward }
+  local ok, input = pcall(vim.fn.getcharstr)
+  M.clear_highlight()
+
+  if not ok then
+    return opts.key
+  end
+  return opts.key .. input
+end
+
+return M
