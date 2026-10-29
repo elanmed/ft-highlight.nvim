@@ -1,4 +1,4 @@
-.PHONY: dev test test-file docs lint deploy clean
+.PHONY: dev clean test test-file lint format docs deploy
 
 dev:
 	mkdir -p ~/.local/share/nvim/site/pack/dev/start/ft-highlight.nvim
@@ -13,11 +13,17 @@ test:
 test-file:
 	nvim --headless --noplugin -u ./scripts/minimal_init.lua -c "lua MiniTest.run_file('$(FILE)')"
 
-docs: 
-	./deps/ts-vimdoc.nvim/scripts/docgen.sh README.md doc/ft-highlight.txt ft-highlight
-
-lint: 
+lint:
 	# https://luals.github.io/#install
-	lua-language-server --check=./lua --checklevel=error
+	lua-language-server --check=./lua --checklevel=Error
 
-deploy: test lint docs
+format:
+	# https://github.com/JohnnyMorganz/StyLua#usage
+	stylua .
+
+docs:
+	mkdir -p ./doc
+	./deps/ts-vimdoc.nvim/scripts/docgen.sh README.md doc/ft-highlight.txt ft-highlight
+	nvim --headless -c "helptags doc/" -c "qa"
+
+deploy: test lint format docs
