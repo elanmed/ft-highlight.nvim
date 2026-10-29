@@ -1,8 +1,9 @@
-*ft-highlight.txt*                                    Last change: 2026 May 09
+*ft-highlight.txt*                                Last change: 2026 October 29
 
 ==============================================================================
 Table of Contents                             *ft-highlight-table-of-contents*
 
+Limitations ....................................... |ft-highlight-limitations|
 Mappings ............................................. |ft-highlight-mappings|
 Configuration ................................... |ft-highlight-configuration|
 Highlight Groups ............................. |ft-highlight-highlight-groups|
@@ -22,6 +23,14 @@ In the example above:
 - 2 jumps is yellow
 - 3 jumps is red
 - 4+ jumps is grey
+
+------------------------------------------------------------------------------
+LIMITATIONS                                         *ft-highlight-limitations*
+
+
+The plugin currently supports ASCII text only; non-ASCII characters may be
+counted or highlighted incorrectly.
+
 Colors are based on existing highlight groups defined by your colorscheme, see
 the section on highlight groups <#highlight-groups>.
 
