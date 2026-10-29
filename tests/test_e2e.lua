@@ -32,6 +32,10 @@ local function get_hl_names(ns_id)
   end, marks)
 end
 
+local function set_line(line)
+  child.api.nvim_buf_set_lines(0, 0, -1, true, { line })
+end
+
 T["configuration"] = new_set()
 T["configuration"]["highlight_pattern"] = function()
   child.g.ft_highlight = { highlight_pattern = "[a-z]" }
@@ -304,6 +308,66 @@ T["keypress"]["T"]["highlights correctly from the first char"] = function()
   eq(get_hl_names(ns_id), {})
   child.type_keys "<esc>"
   eq(get_hl_names(ns_id), {})
+end
+
+T["mapped motions"] = new_set()
+T["mapped motions"]["f moves to the typed character and clears highlights"] = function()
+  set_line "abca"
+  child.api.nvim_win_set_cursor(0, { 1, 0 })
+  local ns_id = child.api.nvim_create_namespace "FTHighlight"
+
+  child.type_keys "f"
+  child.type_keys "c"
+
+  eq(child.api.nvim_win_get_cursor(0), { 1, 2 })
+  eq(get_marks(ns_id), {})
+end
+
+T["mapped motions"]["f preserves visual mode and moves to the typed character"] = function()
+  set_line "abca"
+  child.api.nvim_win_set_cursor(0, { 1, 0 })
+  child.type_keys "v"
+  child.type_keys "f"
+  child.type_keys "c"
+
+  eq(child.api.nvim_win_get_cursor(0), { 1, 2 })
+  eq(child.fn.mode(), "v")
+end
+
+T["mapped motions"]["f works as an operator-pending motion"] = function()
+  set_line "abca"
+  child.api.nvim_win_set_cursor(0, { 1, 0 })
+  child.type_keys "d"
+  child.type_keys "f"
+  child.type_keys "c"
+
+  eq(child.api.nvim_buf_get_lines(0, 0, -1, true), { "a" })
+  eq(child.api.nvim_win_get_cursor(0), { 1, 0 })
+end
+
+T["mapped motions"]["cancelling f clears highlights without moving"] = function()
+  set_line "abca"
+  child.api.nvim_win_set_cursor(0, { 1, 0 })
+  local ns_id = child.api.nvim_create_namespace "FTHighlight"
+
+  child.type_keys "f"
+  eq(#get_marks(ns_id) > 0, true)
+  child.type_keys "<Esc>"
+
+  eq(child.api.nvim_win_get_cursor(0), { 1, 0 })
+  eq(get_marks(ns_id), {})
+end
+
+T["mapped motions"]["empty lines produce no highlights and do not move"] = function()
+  set_line ""
+  child.api.nvim_win_set_cursor(0, { 1, 0 })
+  local ns_id = child.api.nvim_create_namespace "FTHighlight"
+
+  child.type_keys "f"
+  child.type_keys "a"
+
+  eq(child.api.nvim_win_get_cursor(0), { 1, 0 })
+  eq(get_marks(ns_id), {})
 end
 
 return T
