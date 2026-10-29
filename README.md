@@ -11,6 +11,10 @@ In the example above:
 - 3 jumps is red
 - 4+ jumps is grey
 
+## Limitations
+
+The plugin currently supports ASCII text only; non-ASCII characters may be counted or highlighted incorrectly.
+
 Colors are based on existing highlight groups defined by your colorscheme, see the section
 on [highlight groups](#highlight-groups).
 
