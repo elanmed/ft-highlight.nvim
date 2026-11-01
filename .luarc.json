@@ -1,0 +1,7 @@
+{
+  "runtime.version": "LuaJIT",
+  "workspace": {
+    "library": ["lua", "$VIMRUNTIME/lua"],
+    "ignoreSubmodules": false
+  }
+}
