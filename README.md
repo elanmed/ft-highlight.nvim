@@ -2,6 +2,10 @@
 
 Add highlights to a `{f,F,t,T}` movement to visualize the number of jumps to a given character.
 
+## Minimal
+
+- 1 source file (100 LOC), 2 test files (500 LOC), no runtime dependencies
+
 ![demo](https://elanmed.dev/nvim-plugins/ft-highlight.png)
 
 In the example above:
@@ -21,7 +25,7 @@ on [highlight groups](#highlight-groups).
 `ft-highlight` is autoloaded but most code is deferred until the first
 invocation of a `<Plug>FtHighlight_*` mapping.
 
-## Mappings
+## Plug remaps
 
 `ft-highlight` does not create any keymaps by default. It provides `<Plug>`
 mappings that you can map to your preferred keys:
@@ -33,7 +37,7 @@ vim.keymap.set({ "n", "v", "o" }, "t", "<Plug>FtHighlight_t", { remap = true })
 vim.keymap.set({ "n", "v", "o" }, "T", "<Plug>FtHighlight_T", { remap = true })
 ```
 
-## Configuration
+## Example config
 
 ```lua
 -- defaults to:

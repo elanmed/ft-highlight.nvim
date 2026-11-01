@@ -3,9 +3,10 @@
 ==============================================================================
 Table of Contents                             *ft-highlight-table-of-contents*
 
+Minimal ............................................... |ft-highlight-minimal|
 Limitations ....................................... |ft-highlight-limitations|
-Mappings ............................................. |ft-highlight-mappings|
-Configuration ................................... |ft-highlight-configuration|
+Plug remaps ....................................... |ft-highlight-plug-remaps|
+Example config ................................. |ft-highlight-example-config|
 Highlight Groups ............................. |ft-highlight-highlight-groups|
 
 ==============================================================================
@@ -15,6 +16,12 @@ FT-HIGHLIGHT.NVIM                             *ft-highlight-ft-highlight.nvim*
 Add highlights to a `{f,F,t,T}` movement to visualize the number of jumps to a
 given character.
 
+
+------------------------------------------------------------------------------
+MINIMAL                                                 *ft-highlight-minimal*
+
+
+- 1 source file (100 LOC), 2 test files (500 LOC), no runtime dependencies
 demo <https://elanmed.dev/nvim-plugins/ft-highlight.png>
 
 In the example above:
@@ -39,7 +46,7 @@ invocation of a `<Plug>FtHighlight_*` mapping.
 
 
 ------------------------------------------------------------------------------
-MAPPINGS                                               *ft-highlight-mappings*
+PLUG REMAPS                                         *ft-highlight-plug-remaps*
 
 
 `ft-highlight` does not create any keymaps by default. It provides `<Plug>`
@@ -53,7 +60,7 @@ mappings that you can map to your preferred keys:
 <
 
 ------------------------------------------------------------------------------
-CONFIGURATION                                     *ft-highlight-configuration*
+EXAMPLE CONFIG                                   *ft-highlight-example-config*
 
 
 >lua

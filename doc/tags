@@ -1,7 +1,8 @@
-ft-highlight-configuration	ft-highlight.txt	/*ft-highlight-configuration*
+ft-highlight-example-config	ft-highlight.txt	/*ft-highlight-example-config*
 ft-highlight-ft-highlight.nvim	ft-highlight.txt	/*ft-highlight-ft-highlight.nvim*
 ft-highlight-highlight-groups	ft-highlight.txt	/*ft-highlight-highlight-groups*
 ft-highlight-limitations	ft-highlight.txt	/*ft-highlight-limitations*
-ft-highlight-mappings	ft-highlight.txt	/*ft-highlight-mappings*
+ft-highlight-minimal	ft-highlight.txt	/*ft-highlight-minimal*
+ft-highlight-plug-remaps	ft-highlight.txt	/*ft-highlight-plug-remaps*
 ft-highlight-table-of-contents	ft-highlight.txt	/*ft-highlight-table-of-contents*
 ft-highlight.txt	ft-highlight.txt	/*ft-highlight.txt*
