@@ -1,5 +1,7 @@
+local MiniTest = require "mini.test"
 local new_set = MiniTest.new_set
 local eq = MiniTest.expect.equality
+local expect = MiniTest.expect
 local ft_highlight = require "ft-highlight"
 
 local T = new_set {
@@ -53,6 +55,13 @@ T["#get_char_occurrence_at_position"]["should handle empty string"] = function()
   local actual = ft_highlight.get_char_occurrence_at_position ""
   local expected = {}
   eq(actual, expected)
+end
+
+T["#get_char_occurrence_at_position"]["should raise for a malformed pattern"] = function()
+  vim.g.ft_highlight = { highlight_pattern = "[" }
+  expect.error(function()
+    ft_highlight.get_char_occurrence_at_position "a"
+  end)
 end
 
 return T

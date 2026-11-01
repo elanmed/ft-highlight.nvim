@@ -2,6 +2,7 @@ local M = {}
 
 local ns_id = vim.api.nvim_create_namespace "FTHighlight"
 local highlighted_line = nil
+local highlighted_buf = nil
 local initialized = false
 
 --- @generic T
@@ -47,6 +48,8 @@ end
 
 --- @param opts { forward: boolean }
 function M.add_highlight(opts)
+  M.clear_highlight()
+
   local curr_line = vim.api.nvim_get_current_line()
   local cursor_pos = vim.api.nvim_win_get_cursor(0)
 
@@ -103,15 +106,19 @@ function M.add_highlight(opts)
   end
 
   highlighted_line = row_0_indexed
+  highlighted_buf = vim.api.nvim_get_current_buf()
   vim.cmd "redraw"
 end
 
 function M.clear_highlight()
-  if highlighted_line == nil then
+  if highlighted_line == nil or highlighted_buf == nil then
     return
   end
-  vim.api.nvim_buf_clear_namespace(0, ns_id, highlighted_line, highlighted_line + 1)
+  if vim.api.nvim_buf_is_valid(highlighted_buf) then
+    vim.api.nvim_buf_clear_namespace(highlighted_buf, ns_id, highlighted_line, highlighted_line + 1)
+  end
   highlighted_line = nil
+  highlighted_buf = nil
 end
 
 local function maybe_initialize()

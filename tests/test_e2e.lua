@@ -1,3 +1,4 @@
+local MiniTest = require "mini.test"
 local new_set = MiniTest.new_set
 local eq = MiniTest.expect.equality
 
@@ -22,6 +23,10 @@ local T = new_set {
 --- @param ns_id number
 local function get_marks(ns_id)
   return child.api.nvim_buf_get_extmarks(0, ns_id, 0, -1, { details = true })
+end
+
+local function get_marks_in_buffer(bufnr, ns_id)
+  return child.api.nvim_buf_get_extmarks(bufnr, ns_id, 0, -1, { details = true })
 end
 
 --- @param ns_id number
@@ -368,6 +373,41 @@ T["mapped motions"]["empty lines produce no highlights and do not move"] = funct
 
   eq(child.api.nvim_win_get_cursor(0), { 1, 0 })
   eq(get_marks(ns_id), {})
+end
+
+T["mapped motions"]["missing target characters produce no highlights and do not move"] = function()
+  set_line "abca"
+  child.api.nvim_win_set_cursor(0, { 1, 0 })
+  local ns_id = child.api.nvim_create_namespace "FTHighlight"
+
+  child.type_keys "f"
+  child.type_keys "z"
+
+  eq(child.api.nvim_win_get_cursor(0), { 1, 0 })
+  eq(get_marks(ns_id), {})
+end
+
+T["highlight lifecycle"] = new_set()
+T["highlight lifecycle"]["replacing highlights and clearing from another buffer removes all marks"] = function()
+  local first_buf = child.api.nvim_get_current_buf()
+  set_line "abca"
+  child.api.nvim_win_set_cursor(0, { 1, 0 })
+  local ns_id = child.api.nvim_create_namespace "FTHighlight"
+  child.lua [[require("ft-highlight").add_highlight({ forward = true })]]
+  eq(#get_marks(ns_id) > 0, true)
+
+  local second_buf = child.api.nvim_create_buf(true, false)
+  child.api.nvim_buf_set_lines(second_buf, 0, -1, true, { "wxyz" })
+  child.api.nvim_set_current_buf(second_buf)
+  child.api.nvim_win_set_cursor(0, { 1, 0 })
+  child.lua [[require("ft-highlight").add_highlight({ forward = true })]]
+
+  eq(get_marks_in_buffer(first_buf, ns_id), {})
+  eq(#get_marks_in_buffer(second_buf, ns_id) > 0, true)
+
+  child.api.nvim_set_current_buf(first_buf)
+  child.lua [[require("ft-highlight").clear_highlight()]]
+  eq(get_marks_in_buffer(second_buf, ns_id), {})
 end
 
 T["mapped motions"]["F moves to the previous typed character"] = function()
